@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://slipaway00007"]
+
+[ext_resource type="Script" path="res://scripts/Tutorial.gd" id="1_tut01"]
+
+[node name="Tutorial" type="CanvasLayer"]
+layer = 20
+script = ExtResource("1_tut01")

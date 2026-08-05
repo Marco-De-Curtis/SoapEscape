@@ -1,0 +1,53 @@
+[gd_scene load_steps=9 format=3 uid="uid://slipaway00003"]
+
+[ext_resource type="Script" path="res://scripts/Game.gd" id="1_game01"]
+[ext_resource type="Script" path="res://scripts/Soap.gd" id="2_soap01"]
+[ext_resource type="Script" path="res://scripts/Spawner.gd" id="3_spawn01"]
+[ext_resource type="PackedScene" uid="uid://slipaway00004" path="res://scenes/HUD.tscn" id="4_hud01"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_soap"]
+size = Vector2(36, 20)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_soap"]
+radius = 20.0
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_game01")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Spawner" type="Node" parent="."]
+script = ExtResource("3_spawn01")
+
+[node name="Soap" type="CharacterBody2D" parent="."]
+collision_layer = 1
+collision_mask = 2
+script = ExtResource("2_soap01")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Soap"]
+shape = SubResource("RectangleShape2D_soap")
+
+[node name="SoapBody" type="Polygon2D" parent="Soap"]
+color = Color(0.976, 0.894, 0.831, 1)
+
+[node name="ShieldBubble" type="Polygon2D" parent="Soap"]
+color = Color(0.4, 0.85, 1.0, 0.3)
+visible = false
+
+[node name="Face" type="Node2D" parent="Soap"]
+
+[node name="LeftEye" type="Polygon2D" parent="Soap/Face"]
+color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="RightEye" type="Polygon2D" parent="Soap/Face"]
+color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="Mouth" type="Line2D" parent="Soap/Face"]
+width = 2.5
+default_color = Color(0.33, 0.33, 0.33, 1)
+
+[node name="GameCamera" type="Camera2D" parent="Soap"]
+offset = Vector2(0, 126)
+position_smoothing_enabled = false
+
+[node name="HUD" parent="." instance=ExtResource("4_hud01")]

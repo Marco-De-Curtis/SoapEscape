@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://slipaway00005"]
+
+[ext_resource type="Script" path="res://scripts/WinScreen.gd" id="1_win01"]
+
+[node name="WinScreen" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_win01")

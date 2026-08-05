@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://slipaway00004"]
+
+[ext_resource type="Script" path="res://scripts/HUD.gd" id="1_hud01"]
+
+[node name="HUD" type="CanvasLayer"]
+layer = 5
+script = ExtResource("1_hud01")
+
+[node name="HUDRoot" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#ece8e3}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 24px}
+.dv-tid{font:700 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:8px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+.dv-next{margin:24px 0 0;font:12px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.45)}
+@keyframes floatA{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-10px) rotate(1.5deg)}}
+@keyframes floatB{0%,100%{transform:translateY(-3px) rotate(1deg)}50%{transform:translateY(7px) rotate(-1deg)}}
+@keyframes floatC{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes bub{0%{transform:translateY(0) scale(1);opacity:.65}100%{transform:translateY(-90px) scale(.15);opacity:0}}
+@keyframes btnPulse{0%,100%{box-shadow:0 6px 24px rgba(214,51,132,.35)}50%{box-shadow:0 12px 36px rgba(214,51,132,.6)}}
+@keyframes twinkle{0%,100%{opacity:1;transform:scale(1) rotate(0deg)}50%{opacity:.2;transform:scale(.55) rotate(22deg)}}
+@keyframes fadeUp{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes starPop{0%{transform:scale(0) rotate(-15deg);opacity:0}70%{transform:scale(1.3) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:1}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(240,192,64,.5),0 0 40px rgba(240,192,64,.2)}50%{box-shadow:0 0 32px rgba(240,192,64,.8),0 0 60px rgba(240,192,64,.35)}}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t1">
+  <div class="dv-thd">
+    <a class="dv-tid" href="#t1">1</a>
+    <span class="dv-tname">Phase 1 — Character · Logo · Home Screen · Onboarding</span>
+  </div>
+
+  <div class="dv-opts">
+
+    <!-- 1a CHARACTER SHEET -->
+    <div class="dv-opt" id="1a">
+      <div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a> Soap Bar — 5 expression states</div>
+      <div class="dv-card" style="padding:36px 40px;width:960px;">
+        <div style="text-align:center;margin-bottom:20px;">
+          <div style="font-family:'Fredoka One',cursive;font-size:20px;color:#d63384;margin-bottom:4px;">The Soap Bar — Character Sheet</div>
+          <div style="font-family:'Nunito',sans-serif;font-size:12px;color:#9ca3af;">Body colour and size track soap % remaining · Win state included — you need it to sign off the character</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
+          <span style="font:700 10px 'Nunito',sans-serif;color:#c084fc;">100%</span>
+          <div style="flex:1;height:5px;border-radius:3px;background:linear-gradient(90deg,#c084fc 0%,#c084fc 25%,#f59e0b 55%,#f87171 80%,#fecaca 100%);"></div>
+          <span style="font:700 10px 'Nunito',sans-serif;color:#f87171;">0%</span>
+        </div>
+        <div style="display:flex;gap:20px;justify-content:flex-start;align-items:flex-end;margin-bottom:28px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:9px;"><div style="font:700 9px 'Nunito',sans-serif;color:#b0b0c0;text-transform:uppercase;letter-spacing:.07em;">&gt;60%</div><div style="animation:floatA 3.2s ease-in-out infinite;"><svg width="180" height="100" viewBox="0 0 180 100" fill="none"><rect x="2" y="2" width="176" height="96" rx="34" fill="#f0e6ff" stroke="#c084fc" stroke-width="2.5"></rect><rect x="18" y="10" width="46" height="13" rx="7" fill="white" opacity="0.55"></rect><ellipse cx="39" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.35)"></ellipse><ellipse cx="141" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.35)"></ellipse><circle cx="64" cy="42" r="8" fill="#4c1d95"></circle><circle cx="116" cy="42" r="8" fill="#4c1d95"></circle><circle cx="67.5" cy="38" r="2.5" fill="white"></circle><circle cx="119.5" cy="38" r="2.5" fill="white"></circle><path d="M 56 61 Q 90 79 124 61" stroke="#7c3aed" stroke-width="2.5" fill="none" stroke-linecap="round"></path></svg></div><div style="font-family:'Fredoka One',cursive;font-size:15px;color:#7c3aed;">Calm</div><div style="font:700 10px 'Nunito',sans-serif;color:#c084fc;background:#f5f0ff;padding:2px 10px;border-radius:20px;">lavender</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:9px;"><div style="font:700 9px 'Nunito',sans-serif;color:#b0b0c0;text-transform:uppercase;letter-spacing:.07em;">40–60%</div><div style="animation:floatB 2.9s ease-in-out infinite;"><svg width="148" height="82" viewBox="0 0 180 100" fill="none"><rect x="2" y="2" width="176" height="96" rx="34" fill="#fde68a" stroke="#f59e0b" stroke-width="2.5"></rect><rect x="18" y="10" width="46" height="13" rx="7" fill="white" opacity="0.45"></rect><ellipse cx="38" cy="69" rx="19" ry="12" fill="rgba(251,113,133,0.4)"></ellipse><ellipse cx="142" cy="69" rx="19" ry="12" fill="rgba(251,113,133,0.4)"></ellipse><circle cx="64" cy="42" r="9.5" fill="#92400e"></circle><circle cx="116" cy="42" r="9.5" fill="#92400e"></circle><circle cx="68" cy="36" r="3" fill="white"></circle><circle cx="120" cy="36" r="3" fill="white"></circle><path d="M 48 31 Q 64 20 76 29" stroke="#92400e" stroke-width="2.5" fill="none" stroke-linecap="round"></path><path d="M 104 29 Q 116 20 132 31" stroke="#92400e" stroke-width="2.5" fill="none" stroke-linecap="round"></path><path d="M 62 62 Q 90 68 118 62" stroke="#92400e" stroke-width="2.5" fill="none" stroke-linecap="round"></path><path d="M 154 21 Q 148 12 154 7 Q 160 12 154 21 Z" fill="rgba(96,165,250,.75)"></path></svg></div><div style="font-family:'Fredoka One',cursive;font-size:15px;color:#7c3aed;">Worried</div><div style="font:700 10px 'Nunito',sans-serif;color:#d97706;background:#fffbeb;padding:2px 10px;border-radius:20px;">yellow</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:9px;"><div style="font:700 9px 'Nunito',sans-serif;color:#b0b0c0;text-transform:uppercase;letter-spacing:.07em;">20–40%</div><div style="animation:floatA 2.4s ease-in-out infinite;"><svg width="118" height="66" viewBox="0 0 180 100" fill="none"><rect x="2" y="2" width="176" height="96" rx="34" fill="#fecaca" stroke="#f87171" stroke-width="2.5"></rect><rect x="18" y="10" width="46" height="13" rx="7" fill="white" opacity="0.35"></rect><ellipse cx="34" cy="68" rx="23" ry="15" fill="rgba(251,113,133,0.5)"></ellipse><ellipse cx="146" cy="68" rx="23" ry="15" fill="rgba(251,113,133,0.5)"></ellipse><circle cx="64" cy="42" r="13" fill="white"></circle><circle cx="116" cy="42" r="13" fill="white"></circle><circle cx="64" cy="42" r="10" fill="#991b1b"></circle><circle cx="116" cy="42" r="10" fill="#991b1b"></circle><circle cx="59" cy="36" r="4" fill="white"></circle><circle cx="111" cy="36" r="4" fill="white"></circle><path d="M 43 23 L 72 32" stroke="#991b1b" stroke-width="4" stroke-linecap="round"></path><path d="M 108 32 L 137 23" stroke="#991b1b" stroke-width="4" stroke-linecap="round"></path><path d="M 57 70 Q 90 56 123 70" stroke="#991b1b" stroke-width="2.5" fill="none" stroke-linecap="round"></path></svg></div><div style="font-family:'Fredoka One',cursive;font-size:15px;color:#7c3aed;">Panicked</div><div style="font:700 10px 'Nunito',sans-serif;color:#dc2626;background:#fff1f2;padding:2px 10px;border-radius:20px;">pink-red</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:9px;"><div style="font:700 9px 'Nunito',sans-serif;color:#b0b0c0;text-transform:uppercase;letter-spacing:.07em;">&lt;20%</div><div style="animation:floatB 1.9s ease-in-out infinite;"><svg width="90" height="50" viewBox="0 0 180 100" fill="none"><rect x="2" y="2" width="176" height="96" rx="46" fill="#fecaca" stroke="#f87171" stroke-width="2.5"></rect><ellipse cx="33" cy="66" rx="26" ry="17" fill="rgba(251,113,133,0.65)"></ellipse><ellipse cx="147" cy="66" rx="26" ry="17" fill="rgba(251,113,133,0.65)"></ellipse><line x1="53" y1="30" x2="75" y2="53" stroke="#991b1b" stroke-width="5" stroke-linecap="round"></line><line x1="75" y1="30" x2="53" y2="53" stroke="#991b1b" stroke-width="5" stroke-linecap="round"></line><line x1="105" y1="30" x2="127" y2="53" stroke="#991b1b" stroke-width="5" stroke-linecap="round"></line><line x1="127" y1="30" x2="105" y2="53" stroke="#991b1b" stroke-width="5" stroke-linecap="round"></line><ellipse cx="64" cy="61" rx="5" ry="7" fill="rgba(96,165,250,.72)"></ellipse><ellipse cx="116" cy="61" rx="5" ry="7" fill="rgba(96,165,250,.72)"></ellipse><path d="M 50 75 Q 58 69 66 75 Q 74 81 82 75 Q 90 69 98 75 Q 106 81 114 75 Q 122 69 130 75" stroke="#991b1b" stroke-width="2.5" fill="none" stroke-linecap="round"></path></svg></div><div style="font-family:'Fredoka One',cursive;font-size:15px;color:#7c3aed;">Critical</div><div style="font:700 10px 'Nunito',sans-serif;color:#dc2626;background:#fff1f2;padding:2px 10px;border-radius:20px;">dissolving</div></div>
+          <div style="width:1.5px;height:130px;background:linear-gradient(180deg,transparent,#f9a8d4,transparent);align-self:center;margin:0 6px;flex:none;"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:9px;"><div style="font:700 9px 'Nunito',sans-serif;color:#f59e0b;text-transform:uppercase;letter-spacing:.07em;">FINISH LINE ✦</div><div style="animation:floatC 2.6s ease-in-out infinite;"><svg width="180" height="100" viewBox="0 0 180 100" fill="none"><rect x="3" y="3" width="174" height="94" rx="33" fill="none" stroke="#e9d5ff" stroke-width="4" opacity="0.55"></rect><rect x="2" y="2" width="176" height="96" rx="34" fill="#f0e6ff" stroke="#c084fc" stroke-width="2.5"></rect><rect x="18" y="10" width="46" height="13" rx="7" fill="white" opacity="0.55"></rect><ellipse cx="38" cy="70" rx="21" ry="14" fill="rgba(251,113,133,0.45)"></ellipse><ellipse cx="142" cy="70" rx="21" ry="14" fill="rgba(251,113,133,0.45)"></ellipse><text x="64" y="51" text-anchor="middle" font-size="22" fill="#f59e0b" font-family="sans-serif">★</text><text x="116" y="51" text-anchor="middle" font-size="22" fill="#f59e0b" font-family="sans-serif">★</text><path d="M 50 64 Q 90 86 130 64" stroke="#7c3aed" stroke-width="3" fill="none" stroke-linecap="round"></path><text x="17" y="28" font-size="11" fill="#f59e0b" font-family="sans-serif">✦</text><text x="155" y="26" font-size="9" fill="#c084fc" font-family="sans-serif">✦</text></svg></div><div style="font-family:'Fredoka One',cursive;font-size:15px;color:#f59e0b;">Victory!</div><div style="font:700 10px 'Nunito',sans-serif;color:#d97706;background:#fffbeb;padding:2px 10px;border-radius:20px;">★ star eyes</div></div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:13px 18px;background:#fdf2f8;border-radius:10px;"><span style="font:700 10px 'Nunito',sans-serif;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">Body colour →</span><div style="display:flex;align-items:center;gap:6px;"><div style="width:22px;height:22px;border-radius:5px;background:#f0e6ff;border:2px solid #c084fc;"></div><span style="font:600 10px 'Nunito',sans-serif;color:#9ca3af;">Lavender &gt;60%</span></div><span style="color:#e5e7eb;">→</span><div style="display:flex;align-items:center;gap:6px;"><div style="width:22px;height:22px;border-radius:5px;background:#fde68a;border:2px solid #f59e0b;"></div><span style="font:600 10px 'Nunito',sans-serif;color:#9ca3af;">Yellow 30–60%</span></div><span style="color:#e5e7eb;">→</span><div style="display:flex;align-items:center;gap:6px;"><div style="width:22px;height:22px;border-radius:5px;background:#fecaca;border:2px solid #f87171;"></div><span style="font:600 10px 'Nunito',sans-serif;color:#9ca3af;">Pink-red &lt;30%</span></div><span style="font:400 10px 'Nunito',sans-serif;color:#d1d5db;margin-left:auto;font-style:italic;">smooth tween</span></div>
+      </div>
+    </div>
+
+    <!-- 1b LOGO — Japanese kawaii -->
+    <div class="dv-opt" id="1b">
+      <div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a> Wordmark — Japanese kawaii</div>
+      <div class="dv-card" style="padding:28px 30px;width:320px;display:flex;flex-direction:column;gap:28px;background:#f5f0ec;">
+
+        <!-- Logo A: Japanese oval seal -->
+        <div>
+          <div style="font:700 10px 'Nunito',sans-serif;color:#9ca3af;text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;">A — Seal (印鑑 inspired)</div>
+          <div style="display:flex;justify-content:center;">
+            <div style="position:relative;background:white;border-radius:50%;width:180px;height:180px;border:3px solid #1a1a2e;box-shadow:4px 4px 0 #1a1a2e;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;overflow:hidden;">
+              <!-- Inner concentric ring -->
+              <div style="position:absolute;inset:6px;border-radius:50%;border:1px solid rgba(0,0,0,.1);pointer-events:none;"></div>
+              <!-- Soap in circle -->
+              <div style="animation:floatC 3s ease-in-out infinite;">
+                <svg width="90" height="50" viewBox="0 0 180 100" fill="none">
+                  <rect x="0" y="0" width="180" height="100" rx="35" fill="#1a1a2e"></rect>
+                  <rect x="3" y="3" width="174" height="94" rx="33" fill="#f0e6ff"></rect>
+                  <rect x="18" y="10" width="46" height="13" rx="7" fill="white" opacity="0.55"></rect>
+                  <ellipse cx="39" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.38)"></ellipse>
+                  <ellipse cx="141" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.38)"></ellipse>
+                  <circle cx="64" cy="42" r="8" fill="#4c1d95"></circle>
+                  <circle cx="116" cy="42" r="8" fill="#4c1d95"></circle>
+                  <circle cx="67.5" cy="38" r="2.5" fill="white"></circle>
+                  <circle cx="119.5" cy="38" r="2.5" fill="white"></circle>
+                  <path d="M 56 61 Q 90 79 124 61" stroke="#7c3aed" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+                </svg>
+              </div>
+              <!-- Wordmark -->
+              <div style="font-family:'Fredoka One',cursive;font-size:22px;color:#d63384;line-height:1;-webkit-text-stroke:1px white;text-shadow:1px 2px 0 rgba(181,45,112,.45);">Slipaway<span style="color:#7c3aed;">!</span></div>
+              <!-- Tiny subtitle -->
+              <div style="font:700 7px 'Nunito',sans-serif;color:#9ca3af;letter-spacing:.2em;text-transform:uppercase;margin-top:2px;">スライム · 10 LEVELS</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:1px;background:rgba(0,0,0,.1);"></div>
+
+        <!-- Logo B: Japanese sticker — black border, dark offset shadow -->
+        <div>
+          <div style="font:700 10px 'Nunito',sans-serif;color:#9ca3af;text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;">B — Sticker シール (preferred)</div>
+          <div style="display:flex;justify-content:center;">
+            <div style="transform:rotate(-2deg);display:inline-block;">
+              <div style="background:white;border-radius:16px;border:3px solid #1a1a2e;padding:14px 26px 12px;box-shadow:5px 5px 0 #1a1a2e;position:relative;">
+                <!-- Red hanko dot (seal stamp) -->
+                <div style="position:absolute;bottom:-6px;right:-6px;width:22px;height:22px;border-radius:50%;background:#e11d48;border:2px solid white;display:flex;align-items:center;justify-content:center;">
+                  <div style="font:700 7px 'Nunito',sans-serif;color:white;line-height:1;">No.1</div>
+                </div>
+                <!-- Soap with black outline -->
+                <div style="display:flex;justify-content:center;margin-bottom:8px;animation:floatA 3s ease-in-out infinite;">
+                  <svg width="80" height="44" viewBox="0 0 180 100" fill="none">
+                    <rect x="0" y="0" width="180" height="100" rx="35" fill="#1a1a2e"></rect>
+                    <rect x="3" y="3" width="174" height="94" rx="33" fill="#f0e6ff"></rect>
+                    <rect x="18" y="10" width="46" height="13" rx="7" fill="white" opacity="0.55"></rect>
+                    <ellipse cx="39" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.38)"></ellipse>
+                    <ellipse cx="141" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.38)"></ellipse>
+                    <circle cx="64" cy="42" r="8" fill="#4c1d95"></circle>
+                    <circle cx="116" cy="42" r="8" fill="#4c1d95"></circle>
+                    <circle cx="67.5" cy="38" r="2.5" fill="white"></circle>
+                    <circle cx="119.5" cy="38" r="2.5" fill="white"></circle>
+                    <path d="M 56 61 Q 90 79 124 61" stroke="#7c3aed" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+                <!-- Thin rule -->
+                <div style="height:1.5px;background:#1a1a2e;margin-bottom:8px;"></div>
+                <!-- Wordmark -->
+                <div style="font-family:'Fredoka One',cursive;font-size:42px;line-height:1;-webkit-text-stroke:1.5px white;text-align:center;text-shadow:2px 3px 0 rgba(0,0,0,.2);">
+                  <span style="color:#d63384;">Slip</span><span style="color:#7c3aed;">away!</span>
+                </div>
+                <!-- Subtitle row -->
+                <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px;">
+                  <div style="height:1px;flex:1;background:rgba(0,0,0,.12);"></div>
+                  <div style="font:700 8px 'Nunito',sans-serif;color:#9ca3af;letter-spacing:.18em;text-transform:uppercase;white-space:nowrap;">SLIDE · DODGE · SURVIVE</div>
+                  <div style="height:1px;flex:1;background:rgba(0,0,0,.12);"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ROW 2 -->
+  <div class="dv-opts" style="margin-top:32px;">
+
+    <!-- 1c HOME A -->
+    <div class="dv-opt" id="1c">
+      <div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a> Home screen — Airy &amp; Centered</div>
+      <div style="border-radius:50px;background:#1c1c1e;padding:2px;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 24px 64px rgba(0,0,0,.3);">
+        <div style="width:390px;height:844px;border-radius:48px;overflow:hidden;position:relative;background:radial-gradient(ellipse at 50% 35%,#fdf2f8 0%,#fce7f3 100%);">
+          <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:126px;height:37px;background:#1c1c1e;border-radius:19px;z-index:20;"></div>
+          <div style="position:absolute;top:16px;left:28px;font:600 15px 'Nunito',sans-serif;color:#1c1c1e;z-index:21;opacity:.55;">9:41</div>
+          <div style="position:absolute;left:42px;top:300px;width:18px;height:18px;border-radius:50%;background:rgba(249,168,212,.3);animation:bub 4.2s ease-out infinite;"></div>
+          <div style="position:absolute;left:76px;top:500px;width:13px;height:13px;border-radius:50%;background:rgba(196,181,253,.38);animation:bub 5.1s ease-out infinite;animation-delay:1.3s;"></div>
+          <div style="position:absolute;right:52px;top:420px;width:15px;height:15px;border-radius:50%;background:rgba(249,168,212,.28);animation:bub 3.9s ease-out infinite;animation-delay:.7s;"></div>
+          <div style="position:absolute;left:26px;top:165px;font-size:14px;color:#f9a8d4;animation:twinkle 3.2s ease-in-out infinite;">✦</div>
+          <div style="position:absolute;right:30px;top:195px;font-size:11px;color:#c4b5fd;animation:twinkle 2.6s ease-in-out infinite;animation-delay:.9s;">✦</div>
+          <div style="position:absolute;top:82px;left:0;right:0;text-align:center;">
+            <div style="font-family:'Fredoka One',cursive;font-size:52px;color:#d63384;line-height:1;letter-spacing:-.5px;-webkit-text-stroke:1px white;text-shadow:2px 3px 0 rgba(181,45,132,.4);">Slipaway<span style="color:#7c3aed;text-shadow:2px 3px 0 rgba(91,33,182,.4);">!</span></div>
+            <div style="font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;color:#7c3aed;margin-top:8px;opacity:.8;">Slide to the finish line!</div>
+          </div>
+          <div style="position:absolute;top:295px;left:50%;transform:translateX(-50%);animation:floatA 3.2s ease-in-out infinite;"><svg width="240" height="133" viewBox="0 0 180 100" fill="none"><rect x="2" y="2" width="176" height="96" rx="34" fill="#f0e6ff" stroke="#c084fc" stroke-width="2.5"></rect><rect x="18" y="10" width="46" height="13" rx="7" fill="white" opacity="0.55"></rect><ellipse cx="39" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.35)"></ellipse><ellipse cx="141" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.35)"></ellipse><circle cx="64" cy="42" r="8" fill="#4c1d95"></circle><circle cx="116" cy="42" r="8" fill="#4c1d95"></circle><circle cx="67.5" cy="38" r="2.5" fill="white"></circle><circle cx="119.5" cy="38" r="2.5" fill="white"></circle><path d="M 56 61 Q 90 79 124 61" stroke="#7c3aed" stroke-width="2.5" fill="none" stroke-linecap="round"></path></svg></div>
+          <div style="position:absolute;bottom:88px;left:0;right:0;padding:0 32px;display:flex;flex-direction:column;align-items:center;gap:16px;">
+            <button style="width:100%;height:64px;border:none;border-radius:32px;background:#d63384;color:white;font-family:'Fredoka One',cursive;font-size:22px;cursor:pointer;animation:btnPulse 2.1s ease-in-out infinite;display:flex;align-items:center;justify-content:center;gap:10px;">▶ Play!</button>
+            <div style="font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;color:#7c3aed;cursor:pointer;">How to play →</div>
+          </div>
+          <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);width:134px;height:5px;background:#1c1c1e;border-radius:3px;opacity:.2;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1d HOME B -->
+    <div class="dv-opt" id="1d">
+      <div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a> Home screen — Bold &amp; Kinetic</div>
+      <div style="border-radius:50px;background:#1c1c1e;padding:2px;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 24px 64px rgba(0,0,0,.3);">
+        <div style="width:390px;height:844px;border-radius:48px;overflow:hidden;position:relative;background:#fce7f3;">
+          <svg style="position:absolute;top:0;left:0;pointer-events:none;" width="390" height="844" viewBox="0 0 390 844" fill="none"><circle cx="195" cy="-20" r="280" fill="rgba(249,168,212,.14)"></circle><circle cx="420" cy="780" r="220" fill="rgba(196,181,253,.11)"></circle></svg>
+          <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:126px;height:37px;background:#1c1c1e;border-radius:19px;z-index:20;"></div>
+          <div style="position:absolute;top:16px;left:28px;font:600 15px 'Nunito',sans-serif;color:#d63384;z-index:21;opacity:.6;">9:41</div>
+          <div style="position:absolute;top:78px;left:0;right:0;text-align:center;transform:rotate(-1.5deg);"><div style="font-family:'Fredoka One',cursive;font-size:66px;color:#d63384;line-height:1;letter-spacing:-1px;-webkit-text-stroke:1.5px white;text-shadow:3px 4px 0 rgba(181,45,112,.45);">Slipaway<span style="color:#7c3aed;text-shadow:3px 4px 0 rgba(91,33,182,.45);">!</span></div></div>
+          <svg style="position:absolute;top:196px;left:20px;" width="350" height="13" viewBox="0 0 350 13" fill="none"><path d="M 0 6 Q 44 0 87 6 Q 131 13 175 6 Q 218 0 262 6 Q 306 13 350 6" stroke="#f9a8d4" stroke-width="2.5" fill="none" stroke-linecap="round"></path></svg>
+          <div style="position:absolute;top:248px;left:50%;transform:translateX(-50%) rotate(7deg);animation:floatA 2.9s ease-in-out infinite;"><svg width="270" height="150" viewBox="0 0 180 100" fill="none"><path d="M -2 25 L -26 25" stroke="rgba(192,132,252,.4)" stroke-width="3" stroke-linecap="round"></path><path d="M -2 50 L -36 50" stroke="rgba(192,132,252,.28)" stroke-width="2" stroke-linecap="round"></path><rect x="2" y="2" width="176" height="96" rx="34" fill="#f0e6ff" stroke="#c084fc" stroke-width="2.5"></rect><rect x="18" y="10" width="46" height="13" rx="7" fill="white" opacity="0.55"></rect><ellipse cx="39" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.35)"></ellipse><ellipse cx="141" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.35)"></ellipse><circle cx="67" cy="42" r="8" fill="#4c1d95"></circle><circle cx="119" cy="42" r="8" fill="#4c1d95"></circle><circle cx="70.5" cy="38" r="2.5" fill="white"></circle><circle cx="122.5" cy="38" r="2.5" fill="white"></circle><path d="M 58 61 Q 92 79 126 61" stroke="#7c3aed" stroke-width="2.5" fill="none" stroke-linecap="round"></path></svg></div>
+          <div style="position:absolute;bottom:86px;left:0;right:0;padding:0 28px;display:flex;flex-direction:column;align-items:center;gap:18px;">
+            <button style="width:100%;height:72px;border:none;border-radius:36px;background:linear-gradient(135deg,#d63384,#7c3aed);color:white;font-family:'Fredoka One',cursive;font-size:24px;cursor:pointer;box-shadow:0 8px 28px rgba(214,51,132,.4);animation:btnPulse 2s ease-in-out infinite;display:flex;align-items:center;justify-content:center;gap:12px;">▶ Play!</button>
+            <div style="display:flex;gap:28px;"><div style="font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:#d63384;cursor:pointer;">⚙ Settings</div><div style="font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:#7c3aed;cursor:pointer;">🏆 Best Score</div></div>
+          </div>
+          <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);width:134px;height:5px;background:#1c1c1e;border-radius:3px;opacity:.2;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1e ONBOARDING — VISUAL + EXPLANATORY -->
+    <div class="dv-opt" id="1e">
+      <div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a> Onboarding — visual game explainer</div>
+      <div style="border-radius:50px;background:#1c1c1e;padding:2px;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 24px 64px rgba(0,0,0,.3);">
+        <div style="width:390px;height:844px;border-radius:48px;overflow:hidden;position:relative;">
+
+          <!-- ═══ SLIDE 0: TILT TO STEER ═══ -->
+          <sc-if value="{{ slide0Active }}" hint-placeholder-val="{{ true }}">
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;animation:fadeUp .3s ease-out;">
+              <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:126px;height:37px;background:#1c1c1e;border-radius:19px;z-index:20;"></div>
+              <div style="position:absolute;top:20px;right:24px;font:700 13px 'Nunito',sans-serif;color:#d63384;z-index:21;cursor:pointer;" onClick="{{ skipOnboard }}">Skip</div>
+
+              <!-- ILLUSTRATION -->
+              <div style="flex:1;position:relative;overflow:hidden;">
+                <!-- Tile floor -->
+                <svg style="position:absolute;top:0;left:0;width:100%;height:100%;" viewBox="0 0 390 585" preserveAspectRatio="xMidYMid slice" fill="none">
+                  <defs><pattern id="t0" x="0" y="0" width="44" height="44" patternUnits="userSpaceOnUse"><rect width="44" height="44" fill="#fdf2f8"></rect><rect x=".5" y=".5" width="43" height="43" fill="none" stroke="#f0c8e0" stroke-width=".7"></rect></pattern></defs>
+                  <rect width="390" height="585" fill="url(#t0)"></rect>
+                  <!-- Lane -->
+                  <rect x="86" y="18" width="218" height="550" rx="26" fill="rgba(255,255,255,.85)" stroke="#f9a8d4" stroke-width="1.5"></rect>
+                  <!-- Lane dashes -->
+                  <line x1="195" y1="30" x2="195" y2="90" stroke="#f9a8d4" stroke-width="1.5" stroke-dasharray="9,9" opacity=".4"></line>
+                  <line x1="195" y1="118" x2="195" y2="178" stroke="#f9a8d4" stroke-width="1.5" stroke-dasharray="9,9" opacity=".4"></line>
+                  <line x1="195" y1="370" x2="195" y2="430" stroke="#f9a8d4" stroke-width="1.5" stroke-dasharray="9,9" opacity=".4"></line>
+                  <line x1="195" y1="458" x2="195" y2="530" stroke="#f9a8d4" stroke-width="1.5" stroke-dasharray="9,9" opacity=".4"></line>
+                  <!-- LEFT sweep arrow -->
+                  <path d="M 148 272 Q 90 248 50 262" stroke="#d63384" stroke-width="6" stroke-linecap="round" fill="none"></path>
+                  <polygon points="50,253 33,262 50,271" fill="#d63384"></polygon>
+                  <!-- RIGHT sweep arrow -->
+                  <path d="M 242 272 Q 300 248 340 262" stroke="#d63384" stroke-width="6" stroke-linecap="round" fill="none"></path>
+                  <polygon points="340,253 357,262 340,271" fill="#d63384"></polygon>
+                  <!-- Motion lines -->
+                  <line x1="86" y1="248" x2="56" y2="248" stroke="rgba(192,132,252,.5)" stroke-width="3.5" stroke-linecap="round"></line>
+                  <line x1="86" y1="266" x2="46" y2="266" stroke="rgba(192,132,252,.32)" stroke-width="2.5" stroke-linecap="round"></line>
+                  <line x1="86" y1="284" x2="60" y2="284" stroke="rgba(192,132,252,.18)" stroke-width="2" stroke-linecap="round"></line>
+                  <line x1="304" y1="248" x2="334" y2="248" stroke="rgba(192,132,252,.5)" stroke-width="3.5" stroke-linecap="round"></line>
+                  <line x1="304" y1="266" x2="344" y2="266" stroke="rgba(192,132,252,.32)" stroke-width="2.5" stroke-linecap="round"></line>
+                </svg>
+
+                <!-- Phone silhouette LEFT (outside lane, tilted) -->
+                <div style="position:absolute;top:38%;left:8px;transform:translateY(-50%) rotate(-18deg);">
+                  <svg width="34" height="58" viewBox="0 0 34 58" fill="none"><rect x="1" y="1" width="32" height="56" rx="8" fill="white" stroke="#1a1a2e" stroke-width="2"></rect><rect x="5" y="6" width="24" height="38" rx="4" fill="#fdf2f8"></rect><circle cx="17" cy="51" r="3.5" fill="#c084fc"></circle></svg>
+                  <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font:700 10px 'Nunito',sans-serif;color:#d63384;white-space:nowrap;background:white;border-radius:8px;padding:2px 7px;border:1.5px solid #f9a8d4;">← TILT</div>
+                </div>
+
+                <!-- Phone silhouette RIGHT -->
+                <div style="position:absolute;top:38%;right:8px;transform:translateY(-50%) rotate(18deg);">
+                  <svg width="34" height="58" viewBox="0 0 34 58" fill="none"><rect x="1" y="1" width="32" height="56" rx="8" fill="white" stroke="#1a1a2e" stroke-width="2"></rect><rect x="5" y="6" width="24" height="38" rx="4" fill="#fdf2f8"></rect><circle cx="17" cy="51" r="3.5" fill="#c084fc"></circle></svg>
+                  <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font:700 10px 'Nunito',sans-serif;color:#d63384;white-space:nowrap;background:white;border-radius:8px;padding:2px 7px;border:1.5px solid #f9a8d4;">TILT →</div>
+                </div>
+
+                <!-- Soap character, large, in lane -->
+                <div style="position:absolute;top:44%;left:50%;transform:translate(-50%,-50%) rotate(-2deg);animation:floatA 3s ease-in-out infinite;">
+                  <svg width="148" height="82" viewBox="0 0 180 100" fill="none">
+                    <rect x="0" y="0" width="180" height="100" rx="35" fill="#1a1a2e"></rect>
+                    <rect x="3" y="3" width="174" height="94" rx="33" fill="#f0e6ff"></rect>
+                    <rect x="18" y="10" width="46" height="13" rx="7" fill="white" opacity="0.55"></rect>
+                    <ellipse cx="39" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.35)"></ellipse>
+                    <ellipse cx="141" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.35)"></ellipse>
+                    <circle cx="64" cy="42" r="8" fill="#4c1d95"></circle>
+                    <circle cx="116" cy="42" r="8" fill="#4c1d95"></circle>
+                    <circle cx="67.5" cy="38" r="2.5" fill="white"></circle>
+                    <circle cx="119.5" cy="38" r="2.5" fill="white"></circle>
+                    <path d="M 56 61 Q 90 79 124 61" stroke="#7c3aed" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+
+                <!-- Drain at bottom -->
+                <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);">
+                  <svg width="56" height="56" viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="27" fill="rgba(214,51,132,.07)" stroke="#f9a8d4" stroke-width="1.5"></circle><circle cx="28" cy="28" r="13" fill="none" stroke="#f9a8d4" stroke-width="1.2"></circle><line x1="1" y1="28" x2="55" y2="28" stroke="#f9a8d4" stroke-width="1.2"></line><line x1="28" y1="1" x2="28" y2="55" stroke="#f9a8d4" stroke-width="1.2"></line></svg>
+                </div>
+              </div>
+
+              <!-- Bottom card -->
+              <div style="background:white;border-radius:28px 28px 0 0;padding:22px 30px 0;box-shadow:0 -4px 24px rgba(0,0,0,.07);">
+                <div style="font-family:'Fredoka One',cursive;font-size:26px;color:#d63384;margin-bottom:6px;">Tilt your phone to steer.</div>
+                <div style="font-family:'Nunito',sans-serif;font-size:14px;color:#6b7280;line-height:1.55;margin-bottom:20px;">Your soap bar follows the tilt. Left, right, straight — you're in control. The drain is waiting.</div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:13px;padding-bottom:50px;">
+                  <div style="display:flex;gap:8px;"><div style="width:10px;height:10px;border-radius:50%;background:#d63384;cursor:pointer;" onClick="{{ goSlide0 }}"></div><div style="width:10px;height:10px;border-radius:50%;background:#f9a8d4;cursor:pointer;" onClick="{{ goSlide1 }}"></div><div style="width:10px;height:10px;border-radius:50%;background:#f9a8d4;cursor:pointer;" onClick="{{ goSlide2 }}"></div></div>
+                  <button style="width:100%;height:54px;border:none;border-radius:27px;background:#d63384;color:white;font-family:'Nunito',sans-serif;font-size:17px;font-weight:700;cursor:pointer;" onClick="{{ nextSlide }}">Next →</button>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ═══ SLIDE 1: WATER DANGER ═══ -->
+          <sc-if value="{{ slide1Active }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;animation:fadeUp .3s ease-out;">
+              <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:126px;height:37px;background:#1c1c1e;border-radius:19px;z-index:20;"></div>
+              <div style="position:absolute;top:20px;right:24px;font:700 13px 'Nunito',sans-serif;color:#d63384;z-index:21;cursor:pointer;" onClick="{{ skipOnboard }}">Skip</div>
+
+              <!-- ILLUSTRATION -->
+              <div style="flex:1;position:relative;overflow:hidden;">
+                <!-- Tile floor (blue-tinted for water mood) -->
+                <svg style="position:absolute;top:0;left:0;width:100%;height:100%;" viewBox="0 0 390 585" preserveAspectRatio="xMidYMid slice" fill="none">
+                  <defs><pattern id="t1" x="0" y="0" width="44" height="44" patternUnits="userSpaceOnUse"><rect width="44" height="44" fill="#f0f8ff"></rect><rect x=".5" y=".5" width="43" height="43" fill="none" stroke="#bfdbfe" stroke-width=".7"></rect></pattern></defs>
+                  <rect width="390" height="585" fill="url(#t1)"></rect>
+                  <!-- Lane top (safe) -->
+                  <rect x="86" y="18" width="218" height="260" rx="26" fill="rgba(255,255,255,.9)" stroke="#f9a8d4" stroke-width="1.5"></rect>
+                  <!-- Lane bottom (wet zone, shares rounded top with safe) -->
+                  <rect x="86" y="250" width="218" height="320" rx="0" fill="rgba(96,165,250,.18)"></rect>
+                  <rect x="86" y="565" width="218" height="10" rx="5" fill="rgba(96,165,250,.18)"></rect>
+                  <!-- Wet zone border dashed -->
+                  <rect x="87" y="251" width="216" height="318" fill="none" stroke="rgba(96,165,250,.5)" stroke-width="1.5" stroke-dasharray="8,5"></rect>
+                  <!-- Wave separator -->
+                  <path d="M 86 258 Q 118 244 150 258 Q 182 272 214 258 Q 246 244 278 258 Q 304 268 304 258" fill="rgba(96,165,250,.25)" stroke="rgba(96,165,250,.6)" stroke-width="1.5"></path>
+                  <!-- Safe zone dashes -->
+                  <line x1="195" y1="30" x2="195" y2="235" stroke="#f9a8d4" stroke-width="1.5" stroke-dasharray="9,9" opacity=".4"></line>
+                  <!-- Bubbles in wet zone -->
+                  <circle cx="112" cy="380" r="6" fill="rgba(147,197,253,.6)"></circle>
+                  <circle cx="268" cy="340" r="4" fill="rgba(147,197,253,.55)"></circle>
+                  <circle cx="140" cy="460" r="5" fill="rgba(147,197,253,.5)"></circle>
+                  <circle cx="240" cy="420" r="7" fill="rgba(147,197,253,.45)"></circle>
+                  <circle cx="195" cy="490" r="4" fill="rgba(147,197,253,.55)"></circle>
+                  <circle cx="165" cy="530" r="3.5" fill="rgba(147,197,253,.5)"></circle>
+                </svg>
+
+                <!-- WET ZONE annotation badge -->
+                <div style="position:absolute;top:52%;right:12px;transform:translateY(-50%);">
+                  <div style="background:rgba(219,234,254,.95);border:2px solid rgba(96,165,250,.7);border-radius:12px;padding:7px 12px;box-shadow:2px 2px 8px rgba(96,165,250,.2);">
+                    <div style="font:700 10px 'Nunito',sans-serif;color:rgba(29,78,216,.9);white-space:nowrap;">💧 WET ZONE</div>
+                    <div style="font:400 9px 'Nunito',sans-serif;color:rgba(29,78,216,.7);margin-top:2px;white-space:nowrap;">Dissolves your soap</div>
+                  </div>
+                </div>
+
+                <!-- SAFE annotation badge -->
+                <div style="position:absolute;top:22%;right:12px;transform:translateY(-50%);">
+                  <div style="background:rgba(240,253,244,.95);border:2px solid rgba(134,239,172,.8);border-radius:12px;padding:7px 12px;">
+                    <div style="font:700 10px 'Nunito',sans-serif;color:#15803d;white-space:nowrap;">✓ SAFE ZONE</div>
+                  </div>
+                </div>
+
+                <!-- Soap (worried, yellow) in safe zone approaching wet zone -->
+                <div style="position:absolute;top:34%;left:50%;transform:translate(-50%,-50%);animation:floatB 2.8s ease-in-out infinite;">
+                  <svg width="120" height="67" viewBox="0 0 180 100" fill="none">
+                    <rect x="0" y="0" width="180" height="100" rx="35" fill="#1a1a2e"></rect>
+                    <rect x="3" y="3" width="174" height="94" rx="33" fill="#fde68a"></rect>
+                    <rect x="18" y="10" width="46" height="13" rx="7" fill="white" opacity="0.45"></rect>
+                    <ellipse cx="38" cy="69" rx="19" ry="12" fill="rgba(251,113,133,0.4)"></ellipse>
+                    <ellipse cx="142" cy="69" rx="19" ry="12" fill="rgba(251,113,133,0.4)"></ellipse>
+                    <circle cx="64" cy="42" r="9.5" fill="#92400e"></circle>
+                    <circle cx="116" cy="42" r="9.5" fill="#92400e"></circle>
+                    <circle cx="68" cy="36" r="3" fill="white"></circle>
+                    <circle cx="120" cy="36" r="3" fill="white"></circle>
+                    <path d="M 48 31 Q 64 20 76 29" stroke="#92400e" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+                    <path d="M 104 29 Q 116 20 132 31" stroke="#92400e" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+                    <path d="M 62 62 Q 90 68 118 62" stroke="#92400e" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+                    <path d="M 154 21 Q 148 12 154 7 Q 160 12 154 21 Z" fill="rgba(96,165,250,.8)"></path>
+                  </svg>
+                </div>
+
+                <!-- Bubble shield pickup in wet zone, glowing -->
+                <div style="position:absolute;top:65%;left:50%;transform:translate(-50%,-50%);">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <div style="width:68px;height:68px;border-radius:50%;background:radial-gradient(circle at 38% 32%,rgba(240,192,64,.5),rgba(240,192,64,.1));border:2.5px solid rgba(240,192,64,.8);display:flex;align-items:center;justify-content:center;font-size:32px;animation:glow 2s ease-in-out infinite;">🫧</div>
+                    <div style="background:rgba(255,251,235,.95);border:1.5px solid rgba(245,158,11,.6);border-radius:10px;padding:3px 10px;"><div style="font:700 10px 'Nunito',sans-serif;color:#d97706;white-space:nowrap;">GRAB → blocks water!</div></div>
+                  </div>
+                </div>
+
+                <!-- Before/after size panel at bottom -->
+                <div style="position:absolute;bottom:12px;left:0;right:0;padding:0 20px;">
+                  <div style="background:rgba(255,255,255,.9);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;border:1.5px solid #f9a8d4;">
+                    <svg width="52" height="29" viewBox="0 0 180 100" fill="none"><rect x="0" y="0" width="180" height="100" rx="35" fill="#1a1a2e"></rect><rect x="3" y="3" width="174" height="94" rx="33" fill="#f0e6ff"></rect><ellipse cx="39" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.35)"></ellipse><ellipse cx="141" cy="70" rx="17" ry="11" fill="rgba(251,113,133,0.35)"></ellipse><circle cx="64" cy="42" r="8" fill="#4c1d95"></circle><circle cx="116" cy="42" r="8" fill="#4c1d95"></circle><circle cx="67.5" cy="38" r="2.5" fill="white"></circle><circle cx="119.5" cy="38" r="2.5" fill="white"></circle><path d="M 56 61 Q 90 79 124 61" stroke="#7c3aed" stroke-width="3" fill="none" stroke-linecap="round"></path></svg>
+                    <span style="font:700 12px 'Nunito',sans-serif;color:#c084fc;">100%</span>
+                    <div style="flex:1;height:6px;border-radius:3px;background:linear-gradient(90deg,#d63384,#7c3aed);"></div>
+                    <div style="font:800 12px 'Nunito',sans-serif;color:#ef4444;">→ −35%</div>
+                    <div style="height:6px;width:40px;border-radius:3px;background:linear-gradient(90deg,#f59e0b,#fde68a);"></div>
+                    <svg width="28" height="16" viewBox="0 0 180 100" fill="none"><rect x="0" y="0" width="180" height="100" rx="46" fill="#1a1a2e"></rect><rect x="3" y="3" width="174" height="94" rx="43" fill="#fde68a"></rect><line x1="53" y1="30" x2="75" y2="53" stroke="#92400e" stroke-width="5" stroke-linecap="round"></line><line x1="75" y1="30" x2="53" y2="53" stroke="#92400e" stroke-width="5" stroke-linecap="round"></line><line x1="105" y1="30" x2="127" y2="53" stroke="#92400e" stroke-width="5" stroke-linecap="round"></line><line x1="127" y1="30" x2="105" y2="53" stroke="#92400e" stroke-width="5" stroke-linecap="round"></line></svg>
+                    <span style="font:700 12px 'Nunito',sans-serif;color:#f59e0b;">65%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom card -->
+              <div style="background:white;border-radius:28px 28px 0 0;padding:22px 30px 0;box-shadow:0 -4px 24px rgba(0,0,0,.07);">
+                <div style="font-family:'Fredoka One',cursive;font-size:26px;color:#d63384;margin-bottom:6px;">Water dissolves you.</div>
+                <div style="font-family:'Nunito',sans-serif;font-size:14px;color:#6b7280;line-height:1.55;margin-bottom:20px;">Wet zones shrink your soap fast. Grab a bubble shield to block them — or sprint through. Your choice.</div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:13px;padding-bottom:50px;">
+                  <div style="display:flex;gap:8px;"><div style="width:10px;height:10px;border-radius:50%;background:#f9a8d4;cursor:pointer;" onClick="{{ goSlide0 }}"></div><div style="width:10px;height:10px;border-radius:50%;background:#d63384;cursor:pointer;" onClick="{{ goSlide1 }}"></div><div style="width:10px;height:10px;border-radius:50%;background:#f9a8d4;cursor:pointer;" onClick="{{ goSlide2 }}"></div></div>
+                  <button style="width:100%;height:54px;border:none;border-radius:27px;background:#d63384;color:white;font-family:'Nunito',sans-serif;font-size:17px;font-weight:700;cursor:pointer;" onClick="{{ nextSlide }}">Next →</button>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ═══ SLIDE 2: REACH THE FINISH ═══ -->
+          <sc-if value="{{ slide2Active }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;animation:fadeUp .3s ease-out;">
+              <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:126px;height:37px;background:#1c1c1e;border-radius:19px;z-index:20;"></div>
+
+              <!-- ILLUSTRATION -->
+              <div style="flex:1;position:relative;overflow:hidden;background:linear-gradient(180deg,#fdf2f8,#fce7f3 50%,#f3e8ff);">
+                <svg style="position:absolute;top:0;left:0;width:100%;height:100%;" viewBox="0 0 390 585" preserveAspectRatio="xMidYMid slice" fill="none">
+                  <defs>
+                    <pattern id="t2" x="0" y="0" width="44" height="44" patternUnits="userSpaceOnUse"><rect width="44" height="44" fill="rgba(253,242,248,.5)"></rect><rect x=".5" y=".5" width="43" height="43" fill="none" stroke="#e9d5ff" stroke-width=".6"></rect></pattern>
+                    <pattern id="chk" x="86" y="0" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="9" height="9" fill="#d63384"></rect><rect x="9" y="0" width="9" height="9" fill="white"></rect><rect x="0" y="9" width="9" height="9" fill="white"></rect><rect x="9" y="9" width="9" height="9" fill="#d63384"></rect></pattern>
+                  </defs>
+                  <rect width="390" height="585" fill="url(#t2)"></rect>
+                  <!-- Lane -->
+                  <rect x="86" y="18" width="218" height="550" rx="26" fill="rgba(255,255,255,.75)" stroke="#e9d5ff" stroke-width="1.5"></rect>
+                  <!-- Lane dashes above finish -->
+                  <line x1="195" y1="30" x2="195" y2="210" stroke="#e9d5ff" stroke-width="1.5" stroke-dasharray="9,9" opacity=".5"></line>
+                  <!-- Finish line strip (tall, prominent) -->
+                  <rect x="86" y="216" width="218" height="48" fill="url(#chk)"></rect>
+                  <!-- Finish shadow -->
+                  <rect x="86" y="262" width="218" height="6" fill="rgba(0,0,0,.1)"></rect>
+                  <!-- "FINISH" pill on finish line -->
+                  <rect x="138" y="230" width="114" height="22" rx="11" fill="rgba(0,0,0,.4)"></rect>
+                  <text x="195" y="245" text-anchor="middle" font-size="11" fill="white" font-family="sans-serif" font-weight="700" letter-spacing="1">🏁 FINISH LINE</text>
+                  <!-- Lane below finish -->
+                  <line x1="195" y1="268" x2="195" y2="560" stroke="#e9d5ff" stroke-width="1.5" stroke-dasharray="9,9" opacity=".3"></line>
+                </svg>
+
+                <!-- Confetti -->
+                <div style="position:absolute;top:60px;left:70px;font-size:18px;color:#f59e0b;animation:floatA 2s ease-in-out infinite;">✦</div>
+                <div style="position:absolute;top:80px;right:75px;font-size:14px;color:#d63384;animation:floatB 2.4s ease-in-out infinite;animation-delay:.4s;">★</div>
+                <div style="position:absolute;top:50px;left:160px;font-size:11px;color:#c4b5fd;animation:floatC 2.8s ease-in-out infinite;animation-delay:.9s;">✦</div>
+                <div style="position:absolute;top:110px;left:50px;font-size:10px;color:#d63384;animation:floatA 3.2s ease-in-out infinite;animation-delay:.6s;">★</div>
+                <div style="position:absolute;top:90px;right:52px;font-size:9px;color:#f59e0b;animation:floatB 2.6s ease-in-out infinite;">✦</div>
+
+                <!-- Victory soap above finish line -->
+                <div style="position:absolute;top:26%;left:50%;transform:translate(-50%,-50%);animation:floatC 2.5s ease-in-out infinite;">
+                  <svg width="148" height="82" viewBox="0 0 180 100" fill="none">
+                    <rect x="0" y="0" width="180" height="100" rx="35" fill="#1a1a2e"></rect>
+                    <rect x="3" y="3" width="174" height="94" rx="33" fill="#f0e6ff"></rect>
+                    <rect x="18" y="10" width="46" height="13" rx="7" fill="white" opacity="0.55"></rect>
+                    <ellipse cx="38" cy="70" rx="22" ry="15" fill="rgba(251,113,133,0.45)"></ellipse>
+                    <ellipse cx="142" cy="70" rx="22" ry="15" fill="rgba(251,113,133,0.45)"></ellipse>
+                    <text x="64" y="51" text-anchor="middle" font-size="22" fill="#f59e0b" font-family="sans-serif">★</text>
+                    <text x="116" y="51" text-anchor="middle" font-size="22" fill="#f59e0b" font-family="sans-serif">★</text>
+                    <path d="M 50 64 Q 90 86 130 64" stroke="#7c3aed" stroke-width="3" fill="none" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+
+                <!-- 3 Stars -->
+                <div style="position:absolute;top:56%;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center;">
+                  <div style="font-size:40px;animation:starPop .6s ease-out both;animation-delay:.1s;">⭐</div>
+                  <div style="font-size:48px;animation:starPop .6s ease-out both;animation-delay:.3s;">⭐</div>
+                  <div style="font-size:40px;animation:starPop .6s ease-out both;animation-delay:.5s;">⭐</div>
+                </div>
+
+                <!-- Soap % requirement annotation -->
+                <div style="position:absolute;bottom:52px;left:16px;right:16px;">
+                  <div style="background:rgba(255,255,255,.92);border-radius:14px;padding:11px 14px;border:1.5px solid #e9d5ff;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+                      <span style="font:700 10px 'Nunito',sans-serif;color:#7c3aed;text-transform:uppercase;letter-spacing:.05em;">Soap remaining goal</span>
+                      <div style="font-family:'Fredoka One',cursive;font-size:13px;color:#d63384;">Level 1</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <div style="flex:1;height:10px;background:#fce7f3;border-radius:5px;overflow:hidden;border:1px solid #f9a8d4;">
+                        <div style="height:100%;width:68%;background:linear-gradient(90deg,#d63384,#7c3aed);border-radius:5px;"></div>
+                      </div>
+                      <span style="font:700 13px 'Nunito',sans-serif;color:#d63384;white-space:nowrap;">68% 🧼</span>
+                    </div>
+                    <div style="display:flex;gap:4px;margin-top:6px;align-items:center;">
+                      <div style="width:8px;height:8px;border-radius:50%;background:#15803d;flex:none;"></div>
+                      <span style="font:400 11px 'Nunito',sans-serif;color:#6b7280;">Minimum 30% needed to pass · 3 stars = 70%+</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom card -->
+              <div style="background:white;border-radius:28px 28px 0 0;padding:22px 30px 0;box-shadow:0 -4px 24px rgba(0,0,0,.07);">
+                <div style="font-family:'Fredoka One',cursive;font-size:26px;color:#d63384;margin-bottom:6px;">Reach the finish line.</div>
+                <div style="font-family:'Nunito',sans-serif;font-size:14px;color:#6b7280;line-height:1.55;margin-bottom:20px;">Get there with enough soap left. 3 stars if you barely dissolved. 10 levels of increasing chaos.</div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:13px;padding-bottom:50px;">
+                  <div style="display:flex;gap:8px;"><div style="width:10px;height:10px;border-radius:50%;background:#f9a8d4;cursor:pointer;" onClick="{{ goSlide0 }}"></div><div style="width:10px;height:10px;border-radius:50%;background:#f9a8d4;cursor:pointer;" onClick="{{ goSlide1 }}"></div><div style="width:10px;height:10px;border-radius:50%;background:#d63384;cursor:pointer;" onClick="{{ goSlide2 }}"></div></div>
+                  <button style="width:100%;height:54px;border:none;border-radius:27px;background:linear-gradient(135deg,#d63384,#7c3aed);color:white;font-family:'Fredoka One',cursive;font-size:22px;cursor:pointer;box-shadow:0 6px 24px rgba(214,51,132,.4);" onClick="{{ goSlide0 }}">Let's Go! 🎮</button>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="dv-next">Next: "pick a logo direction to develop further" · "try dark backgrounds on the onboarding" · "show level map preview (phase 2)" · "win/fail screens"</p>
+
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { slide: 0 };
+  renderVals() {
+    const s = this.state.slide;
+    return {
+      slide0Active: s === 0,
+      slide1Active: s === 1,
+      slide2Active: s === 2,
+      nextSlide: () => this.setState(p => ({ slide: Math.min(p.slide + 1, 2) })),
+      goSlide0: () => this.setState({ slide: 0 }),
+      goSlide1: () => this.setState({ slide: 1 }),
+      goSlide2: () => this.setState({ slide: 2 }),
+      skipOnboard: () => this.setState({ slide: 2 }),
+    };
+  }
+}
+</script>
+</body>
+</html>

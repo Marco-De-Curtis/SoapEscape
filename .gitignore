@@ -1,0 +1,20 @@
+# Godot's import/cache folder — regenerated on open, must never be committed
+.godot/
+
+# Build artefacts. The executables are ~100 MB each and GitHub rejects any
+# single file over 100 MB, so these would break the push outright.
+*.exe
+*.pck
+*.dll
+*.so
+*.dylib
+build/
+export/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+
+# Claude Code local tooling config (machine-specific paths)
+.claude/
