@@ -28,7 +28,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_bob_t += delta
- 		queue_redraw()
+	queue_redraw()
 
 # ── Background + soap mascot ───────────────────────────────────────────────
 

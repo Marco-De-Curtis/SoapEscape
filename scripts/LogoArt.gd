@@ -31,7 +31,7 @@ static func paint_wide(ci: CanvasItem, centre: Vector2, scale: float = 1.0,
 	_poly(ci, _wp(centre, ang, water(hw - 5.0 * scale, hh - 5.0 * scale, r - 3.0 * scale, 20.0 * scale)), WATER)
 
 	for b in [[Vector2(-98, 50), 6.0], [Vector2(-62, 62), 4.0],
-			  [Vector2(72, 56), 5.0], [Vector2(106, 42), 3.5]]:
+			[Vector2(72, 56), 5.0], [Vector2(106, 42), 3.5]]:
 		ci.draw_arc(centre + ((b[0] as Vector2) * scale).rotated(ang), float(b[1]) * scale,
 			0.0, TAU, 16, Color(1, 1, 1, 0.6), 1.8 * scale, true)
 

@@ -278,7 +278,7 @@ func _spawn_finish_line(channel_half: float, y: float) -> void:
 			var tile := ColorRect.new()
 			tile.size     = Vector2(tile_size, tile_size)
 			tile.position = Vector2(-total_w * 0.5 + float(tc) * tile_size,
-			                       -total_h * 0.5 + float(tr) * tile_size)
+			-total_h * 0.5 + float(tr) * tile_size)
 			tile.color    = Color("#d63384") if even else Color.WHITE
 			tile.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			line.add_child(tile)

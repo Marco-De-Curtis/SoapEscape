@@ -1,3 +1,4 @@
+class_name MapScreen
 extends Control
 
 const NODE_POSITIONS: Array[Vector2] = [
@@ -175,7 +176,7 @@ func _build_nodes() -> void:
 		var lid      := int(lv.get("id", i + 1))
 		var pos      := NODE_POSITIONS[i]
 		var done     := SaveData.is_level_complete(lid)
-		var unlocked := lid == 1 or SaveData.is_level_complete(lid - 1)
+		var unlocked := is_unlocked(i)
 		var stars    := SaveData.get_stars(lid)
 		var is_cur   := (i == current_idx)
 
@@ -265,7 +266,20 @@ func _build_nodes() -> void:
 
 # ── Helpers ────────────────────────────────────────────────────────────────
 
+## A level is playable only once the previous one has been completed.
+static func is_unlocked(index: int) -> bool:
+	if index <= 0:
+		return true
+	if index >= LevelData.LEVELS.size():
+		return false
+	var prev_id := int(LevelData.LEVELS[index - 1].get("id", index))
+	return SaveData.is_level_complete(prev_id)
+
 func _on_level_tapped(index: int) -> void:
+	# The node button is already disabled when locked; this second check means a
+	# locked level can never be entered even if the button state is ever wrong.
+	if not is_unlocked(index):
+		return
 	GameData.current_level_index = index
 	get_tree().change_scene_to_file("res://scenes/Game.tscn")
 

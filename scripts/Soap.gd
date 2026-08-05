@@ -152,7 +152,7 @@ func _physics_process(delta: float) -> void:
 
 	position.x = clampf(position.x,
 		-lane_half + get_width() * 0.5,
-		 lane_half - get_width() * 0.5)
+		lane_half - get_width() * 0.5)
 
 	if get_slide_collision_count() > 0:
 		velocity.x     = 0.0
