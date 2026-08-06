@@ -210,17 +210,55 @@ workflows:
       - name: Set the build number
         script: |
           set -euo pipefail
-          # TestFlight rejects a build whose number it has seen before, so take
-          # the highest already uploaded and add one. Credentials are passed
-          # explicitly so a failure here is a real error, not a silent 0.
-          BUILD_NUMBER=$(app-store-connect get-latest-testflight-build-number \
-            --bundle-id "$IOS_BUNDLE_ID" \
-            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
-            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key "@file:$ASC_KEY" 2>/dev/null || echo "0")
-          NEXT=$((BUILD_NUMBER + 1))
-          echo "Using build number $NEXT"
+          # CFBundleVersion must be strictly greater than every value Apple has
+          # already accepted for this bundle id, or the upload dies with a 409
+          # ENTITY_ERROR.ATTRIBUTE.INVALID.DUPLICATE.
+          #
+          # Two independent sources, and the larger wins:
+          #   1. Apple's record of the highest TestFlight build.
+          #   2. Codemagic's per-project build counter, which only increases.
+          #
+          # Source 1 alone is what broke the second upload: the query failed,
+          # the old `2>/dev/null || echo 0` swallowed the reason, and the build
+          # went out as number 1 — the single value certain to be taken. Never
+          # let a failed lookup produce a plausible-looking number.
+          APPLE_LATEST=0
+          if QUERY=$(app-store-connect get-latest-testflight-build-number \
+                       --bundle-id "$IOS_BUNDLE_ID" \
+                       --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+                       --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+                       --private-key "@file:$ASC_KEY" 2>&1); then
+            # Accept only a bare integer; the CLI has been known to print
+            # banners and warnings alongside the answer.
+            APPLE_LATEST=$(printf '%s' "$QUERY" | tr -d '[:space:]' \
+                           | grep -E '^[0-9]+$' || echo 0)
+          else
+            echo "  Could not read the latest build number from Apple:"
+            printf '%s\n' "$QUERY" | sed 's/^/    /'
+            echo "  Falling back to the Codemagic build counter."
+          fi
+
+          # $BUILD_NUMBER is set by Codemagic and counts every build of this
+          # project, failures included, so it is monotonic even when Apple
+          # cannot be reached.
+          CM_COUNTER=${BUILD_NUMBER:-0}
+          case "$CM_COUNTER" in (*[!0-9]*|"") CM_COUNTER=0 ;; esac
+
+          HIGHEST=$(( APPLE_LATEST > CM_COUNTER ? APPLE_LATEST : CM_COUNTER ))
+          NEXT=$(( HIGHEST + 1 ))
+          echo "Build number $NEXT (Apple has $APPLE_LATEST, Codemagic counter $CM_COUNTER)"
+
           sed -i '' "s|^application/version=.*|application/version=\"$NEXT\"|" export_presets.cfg
+          # Confirm the write landed. A sed that matches nothing exits 0, so
+          # without this check a renamed preset key would sail through and the
+          # failure would only surface as a duplicate-version rejection eight
+          # minutes later, at the upload.
+          if ! grep -q "^application/version=\"$NEXT\"$" export_presets.cfg; then
+            echo "ERROR: could not write the build number into export_presets.cfg." >&2
+            echo "       Expected a line 'application/version=...' to update." >&2
+            grep -n '^application/version' export_presets.cfg >&2 || true
+            exit 1
+          fi
 
       - name: Export the Xcode project from Godot
         script: |
