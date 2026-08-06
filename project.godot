@@ -59,5 +59,10 @@ lean_right={
 
 [rendering]
 
+; Required for iOS export. Without it the Apple-embedded exporter fails
+; has_valid_project_configuration(), and because that branch sets valid=false
+; without appending to the error string, Godot reports a configuration error
+; with an empty list, which is impossible to diagnose from the message alone.
+textures/vram_compression/import_etc2_astc=true
 renderer/rendering_method="mobile"
 renderer/rendering_method.mobile="gl_compatibility"
