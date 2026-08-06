@@ -65,12 +65,14 @@ Ten levels of slippery panic. Steer your soap past drains, ducks and combs, and 
 
 ---
 
-## Description [1187 / 4000]
+## Description [1275 / 4000]
 
 ```
-You are a bar of soap. You have slipped out of someone's hand, and the drain channel ahead is long, wet, and full of things that want to wear you down.
+You are a bar of soap, sliding down a drain, slowly melting.
 
-Tap the left or right side of the screen to lean. That is the whole control scheme. Getting good at it is the rest of the game.
+Tap left or right to steer. That is the whole game, and it is harder than it sounds.
+
+No ads, no in-app purchases, no internet. Just ten levels and one very determined bar of soap.
 
 MELT OR MAKE IT
 Every wet zone you slide through shrinks you. Every duck, drain grate, sponge and comb you clip takes a bite out of you. Cross the finish line too small and you do not qualify. Hit zero and you are gone entirely, swirling away like last week's lather.
@@ -78,14 +80,14 @@ Every wet zone you slide through shrinks you. Every duck, drain grate, sponge an
 WATCH YOUR FACE
 Your soap tells you how it is going before the meter does. Calm lavender turns to worried yellow, then panicked orange, then a red bar of soap that is one puddle away from the end.
 
-TEN HAND-TUNED LEVELS
+TEN ESCALATING LEVELS
 The channel narrows, the current speeds up, and the qualifying size creeps higher every level. Light Rain is gentle. Drain's Edge is not. Three stars needs almost all of you intact.
 
 GRAB WHAT YOU CAN
 Soap slivers top you back up. Bubble shields eat one hit for free. Both are placed where you have to choose between the safe line and the greedy one.
 
-NO STRINGS
-No ads. No in-app purchases. No account. No internet needed. No data collected, ever. Just a small game about a soft, doomed, extremely determined bar of soap.
+MADE BY HAND
+Every pixel is drawn in code, from the soap's face to the bathroom tiles. No stock art, no asset packs, no template. One person, one very silly idea, ten levels of consequences.
 ```
 
 ---
@@ -200,6 +202,11 @@ Contact with obstacles removes a chunk of it.
 Levels 2 through 10 unlock in sequence as each previous level is completed.
 
 There are no ads, no in-app purchases, and no data collection of any kind.
+
+ORIGINALITY: this is an original game, not a reskin or a template build. All
+gameplay code, level design and artwork were written from scratch in GDScript.
+The graphics are generated procedurally at runtime rather than taken from any
+asset pack or store template. This is the developer's only app.
 ```
 
 ---
