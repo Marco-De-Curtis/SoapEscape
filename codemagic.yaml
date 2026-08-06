@@ -27,8 +27,9 @@
 #
 # See store/SECRETS.md for what is secret and what is not.
 #
-# The Godot export half of this is proven: it reaches the signing step on
-# Codemagic. The signing half is still being shaken out.
+# Proven on Codemagic through to a signed SoapEscape.ipa: Godot export,
+# certificate and profile fetch, and the Xcode archive all succeed. The
+# TestFlight upload is the last step still being shaken out.
 
 workflows:
   ios-testflight:
@@ -259,20 +260,30 @@ workflows:
             --project "$XCODE_PROJECT" \
             --scheme "$SCHEME"
 
+      - name: Upload to TestFlight
+        script: |
+          set -euo pipefail
+          IPA=$(ls build/ios/ipa/*.ipa | head -1)
+          echo "Uploading $(basename "$IPA")"
+          # Deliberately --testflight and not --app-store: get it onto a real
+          # phone and play all ten levels before anything reaches a reviewer.
+          app-store-connect publish \
+            --path "$IPA" \
+            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            --private-key "@file:$ASC_KEY" \
+            --testflight
+
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log      # the only useful thing when signing fails
 
     publishing:
-      app_store_connect:
-        api_key: $ASC_KEY
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        submit_to_testflight: true
-        # Left off deliberately. Get a build onto your own phone and play all
-        # ten levels before anything reaches a reviewer.
-        submit_to_app_store: false
-
+      # No app_store_connect block. Its api_key field wants the key's contents,
+      # but the only thing a script can hand back through CM_ENV is a path, and
+      # Codemagic then passes that path as @env: for the CLI to parse as PEM.
+      # Uploading from the script instead lets the key go in as @file:, the
+      # same form fetch-signing-files already uses successfully.
       email:
         recipients:
           - soapyescape.support@gmail.com
