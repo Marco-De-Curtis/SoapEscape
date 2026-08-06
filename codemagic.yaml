@@ -12,8 +12,9 @@
 #        IOS_BUNDLE_ID                   com.marcodecurtis.soapescape
 #        APP_STORE_CONNECT_ISSUER_ID     the UUID from App Store Connect
 #        APP_STORE_CONNECT_KEY_IDENTIFIER the 10-character Key ID
-#        APP_STORE_CONNECT_PRIVATE_KEY   the whole .p8 file contents,
-#                                        including the BEGIN/END lines
+#        APP_STORE_CONNECT_PRIVATE_KEY   the whole .p8 file contents. The
+#                                        newlines do not matter: the key is
+#                                        re-wrapped into valid PEM below.
 #   3. Start your first build.
 #
 # Deliberately no Codemagic "integration" is used: those live under Teams and
@@ -21,9 +22,8 @@
 #
 # See store/SECRETS.md for what is secret and what is not.
 #
-# NOTE: this config has not been run. iOS signing pipelines essentially never
-# work on the first attempt, so expect two or three rounds of failures. The
-# likely culprits are called out in comments below.
+# The Godot export half of this is proven: it reaches the signing step on
+# Codemagic. The signing half is still being shaken out.
 
 workflows:
   ios-testflight:
@@ -103,13 +103,44 @@ workflows:
           # the guard.
           "$GODOT" --headless --path . --import || true
 
+      - name: Prepare the App Store Connect key
+        script: |
+          set -euo pipefail
+          # Codemagic's variable box does not reliably preserve the newlines in
+          # a pasted .p8, and the CLI then rejects it with "Provided value is
+          # not a valid PEM encoded private key". Rebuild a correct PEM from
+          # whatever we were handed: strip the armour and all whitespace, then
+          # re-wrap the base64 body at 64 characters. This works whether the
+          # value arrived intact, flattened to one line, or with stray spaces.
+          KEYFILE="$HOME/asc_key.p8"
+          python3 - "$KEYFILE" <<'PYEOF'
+          import os, re, sys
+          raw = os.environ["APP_STORE_CONNECT_PRIVATE_KEY"].strip()
+          body = re.sub(r"-----(BEGIN|END) PRIVATE KEY-----", "", raw)
+          body = re.sub(r"\s+", "", body)
+          if not body:
+              sys.exit("APP_STORE_CONNECT_PRIVATE_KEY is empty")
+          lines = [body[i:i + 64] for i in range(0, len(body), 64)]
+          pem = "-----BEGIN PRIVATE KEY-----\n" + "\n".join(lines) + "\n-----END PRIVATE KEY-----\n"
+          with open(sys.argv[1], "w") as f:
+              f.write(pem)
+          os.chmod(sys.argv[1], 0o600)
+          # Length only, never the contents.
+          print("rebuilt PEM: %d base64 chars over %d lines" % (len(body), len(lines)))
+          PYEOF
+          echo "ASC_KEY=$KEYFILE" >> "$CM_ENV"
+
       - name: Set the build number
         script: |
           set -euo pipefail
           # TestFlight rejects a build whose number it has seen before, so take
-          # the highest already uploaded and add one.
+          # the highest already uploaded and add one. Credentials are passed
+          # explicitly so a failure here is a real error, not a silent 0.
           BUILD_NUMBER=$(app-store-connect get-latest-testflight-build-number \
-            --bundle-id "$IOS_BUNDLE_ID" 2>/dev/null || echo "0")
+            --bundle-id "$IOS_BUNDLE_ID" \
+            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            --private-key "@file:$ASC_KEY" 2>/dev/null || echo "0")
           NEXT=$((BUILD_NUMBER + 1))
           echo "Using build number $NEXT"
           sed -i '' "s|^application/version=.*|application/version=\"$NEXT\"|" export_presets.cfg
@@ -125,13 +156,15 @@ workflows:
       - name: Fetch signing files and build the IPA
         script: |
           set -euo pipefail
-          # app-store-connect picks up APP_STORE_CONNECT_ISSUER_ID,
-          # APP_STORE_CONNECT_KEY_IDENTIFIER and APP_STORE_CONNECT_PRIVATE_KEY
-          # from the environment, so no arguments carry the credentials and
-          # nothing lands in the log.
+          # Credentials are passed explicitly rather than left to the CLI's
+          # environment lookup: the key goes in as @file: so its contents never
+          # appear in an argument or in the log.
           keychain initialize
           app-store-connect fetch-signing-files "$IOS_BUNDLE_ID" \
-            --type IOS_APP_STORE --create
+            --type IOS_APP_STORE --create \
+            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            --private-key "@file:$ASC_KEY"
           keychain add-certificates
 
           # Apply the profile to the project Godot just generated.
@@ -155,7 +188,7 @@ workflows:
 
     publishing:
       app_store_connect:
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        api_key: $ASC_KEY
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
