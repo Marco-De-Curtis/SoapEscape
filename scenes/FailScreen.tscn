@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://slipaway00006"]
+[gd_scene load_steps=2 format=3 uid="uid://soapescape00006"]
 
 [ext_resource type="Script" path="res://scripts/FailScreen.gd" id="1_fail01"]
 

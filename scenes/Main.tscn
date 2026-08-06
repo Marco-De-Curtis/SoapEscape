@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://slipaway00001"]
+[gd_scene load_steps=2 format=3 uid="uid://soapescape00001"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_main01"]
 

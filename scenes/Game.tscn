@@ -1,9 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://slipaway00003"]
+[gd_scene load_steps=9 format=3 uid="uid://soapescape00003"]
 
 [ext_resource type="Script" path="res://scripts/Game.gd" id="1_game01"]
 [ext_resource type="Script" path="res://scripts/Soap.gd" id="2_soap01"]
 [ext_resource type="Script" path="res://scripts/Spawner.gd" id="3_spawn01"]
-[ext_resource type="PackedScene" uid="uid://slipaway00004" path="res://scenes/HUD.tscn" id="4_hud01"]
+[ext_resource type="PackedScene" uid="uid://soapescape00004" path="res://scenes/HUD.tscn" id="4_hud01"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_soap"]
 size = Vector2(36, 20)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://slipaway00002"]
+[gd_scene load_steps=2 format=3 uid="uid://soapescape00002"]
 
 [ext_resource type="Script" path="res://scripts/MapScreen.gd" id="1_map01"]
 
