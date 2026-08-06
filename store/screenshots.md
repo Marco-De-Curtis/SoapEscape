@@ -22,8 +22,9 @@ drop a 1320x2868 file into the 6.5" slot and it refuses. Either switch the
 selector to iPhone 6.9" Display, or upload `final_65/` instead. Both sets are
 committed because the two classes are different aspect ratios (0.4603 against
 0.4622), so one cannot simply be resized into the other without distorting the
-art. The game is iPhone only
-(`targeted_device_family=1`), so no iPad set is required.
+art. The game is iPhone only, so no iPad set is required. Note the preset value:
+`targeted_device_family=0` means iPhone. 1 means iPad and 2 means both, which
+is not the raw UIDeviceFamily numbering it looks like.
 
 App Store Connect rejects files that are off by a single pixel. Check dimensions
 before uploading, not after.
