@@ -129,21 +129,27 @@ workflows:
           # pasted key, and the CLI rejects a flattened one as "not a valid PEM
           # encoded private key". Rebuild valid PEM from whatever we are given:
           # strip the armour and all whitespace, re-wrap the base64 at 64.
-          normalise_pem() {   # $1 = env var name, $2 = out path, $3 = PEM label
+          normalise_pem() {   # $1 = env var name, $2 = out path, $3 = fallback label
             python3 - "$1" "$2" "$3" <<'PYEOF'
           import os, re, sys
-          var, out, label = sys.argv[1], sys.argv[2], sys.argv[3]
+          var, out, fallback = sys.argv[1], sys.argv[2], sys.argv[3]
           raw = os.environ.get(var, "").strip()
           if not raw:
               sys.exit("%s is empty" % var)
-          body = re.sub(r"-----(BEGIN|END)[A-Z ]*PRIVATE KEY-----", "", raw)
+          # Keep whatever label the key arrived with. openssl genrsa emits
+          # PKCS#8 "PRIVATE KEY" on OpenSSL 3.x but PKCS#1 "RSA PRIVATE KEY" on
+          # 1.x, and ssh-keygen -m PEM gives PKCS#1. Forcing one label onto the
+          # other format produces a file that parses as the wrong structure.
+          m = re.search(r"-----BEGIN ([A-Z0-9 ]*PRIVATE KEY)-----", raw)
+          label = m.group(1) if m else fallback
+          body = re.sub(r"-----(BEGIN|END) [A-Z0-9 ]*PRIVATE KEY-----", "", raw)
           body = re.sub(r"\s+", "", body)
           lines = [body[i:i + 64] for i in range(0, len(body), 64)]
           pem = "-----BEGIN %s-----\n%s\n-----END %s-----\n" % (label, "\n".join(lines), label)
           with open(out, "w") as f:
               f.write(pem)
           os.chmod(out, 0o600)
-          print("  %s: rebuilt %d base64 chars over %d lines" % (var, len(body), len(lines)))
+          print("  %s: %s, %d base64 chars over %d lines" % (var, label, len(body), len(lines)))
           PYEOF
           }
 
