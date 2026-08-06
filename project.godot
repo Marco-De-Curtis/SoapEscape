@@ -33,7 +33,20 @@ window/size/viewport_width=390
 window/size/viewport_height=844
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
-window/handheld/orientation="portrait"
+; 1 is SCREEN_PORTRAIT. This MUST stay an integer.
+;
+; Godot 3 took a string here and Godot 4 takes the ScreenOrientation enum,
+; which main.cpp reads as int(GLOBAL_DEF_BASIC(...)). A leftover "portrait"
+; string is not rejected: Godot's String-to-int conversion parses leading
+; digits, finds none, and yields 0 — and 0 is SCREEN_LANDSCAPE. The setting
+; then reads in English as the exact opposite of what it does, and the game
+; ships locked to landscape.
+;
+; The iOS export preset's orientation/* keys do not save you. Those only
+; write UISupportedInterfaceOrientations into Info.plist, and
+; DisplayServerIOS::screen_set_orientation overrides that at startup via
+; setNeedsUpdateOfSupportedInterfaceOrientations.
+window/handheld/orientation=1
 
 [input]
 
