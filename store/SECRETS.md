@@ -101,6 +101,18 @@ Copy the entire output, including the BEGIN and END lines, into a Secret
 variable named `CERTIFICATE_PRIVATE_KEY` in the `appstore` group. The build
 then reuses the same certificate every time.
 
+**Copy it without selecting by hand.** A partial paste is the single most
+common failure here, and it looks structurally fine in the log: correct
+armour, correct label, almost no key. In PowerShell:
+
+```
+Get-Content $HOME\certkey.pem -Raw | Set-Clipboard
+```
+
+To check what you are about to paste, `(Get-Content $HOME\certkey.pem -Raw).Length`
+should print roughly 1700 for a 2048-bit key. The build rejects anything under
+150 base64 characters as truncated.
+
 Newline handling does not matter for either key. The workflow strips the
 armour and re-wraps the base64 itself, because Codemagic's variable box does
 not reliably preserve line breaks.

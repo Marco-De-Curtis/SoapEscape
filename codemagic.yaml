@@ -150,6 +150,15 @@ workflows:
               f.write(pem)
           os.chmod(out, 0o600)
           print("  %s: %s, %d base64 chars over %d lines" % (var, label, len(body), len(lines)))
+          # A truncated paste is the most common failure and looks structurally
+          # fine: correct armour, correct label, almost no key. A 2048-bit RSA
+          # key carries ~1600 base64 chars and an EC P-256 .p8 about 200, so
+          # anything far below that never had a chance of parsing.
+          if len(body) < 150:
+              sys.exit(
+                  "%s looks truncated: only %d base64 characters. Expect ~1600 for a "
+                  "2048-bit RSA key or ~200 for a .p8. Re-copy the whole file, "
+                  "BEGIN and END lines included." % (var, len(body)))
           PYEOF
           }
 
