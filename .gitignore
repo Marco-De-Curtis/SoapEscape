@@ -18,3 +18,25 @@ Thumbs.db
 
 # Claude Code local tooling config (machine-specific paths)
 .claude/
+
+# ── Signing material. THIS REPOSITORY IS PUBLIC. ──────────────────────────
+# None of the following may ever be committed. A leaked .p8 or .p12 lets
+# someone else upload builds under your developer account, and revoking one
+# means reissuing every credential that depends on it.
+*.p8              # App Store Connect API private key (downloadable once)
+*.p12             # exported signing certificate + private key
+*.cer             # signing certificate
+*.certSigningRequest
+*.mobileprovision # provisioning profile
+*.pem
+*.key
+
+# Local, uncommitted signing config. tools/configure_ios_build.py patches
+# export_presets.cfg in place at build time from environment variables, so a
+# locally configured copy must not be pushed back.
+.env
+.env.local
+export_presets.local.cfg
+
+# Screenshots captured by store/_screenshot_helper.gd
+screenshots/

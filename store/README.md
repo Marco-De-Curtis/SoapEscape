@@ -12,6 +12,7 @@ it is packaged into the game: the iOS export preset's `exclude_filter` drops
 | `support.html` | Hostable support page (URL is mandatory) |
 | `_screenshot_helper.gd` | Dev tool for capturing full-resolution frames |
 | `BUILD_WITHOUT_A_MAC.md` | How to build and ship iOS without owning a Mac |
+| `SECRETS.md` | What is secret, and where each signing value goes |
 
 ---
 
@@ -22,7 +23,7 @@ you can make.
 
 | Placeholder | Where | Notes |
 |---|---|---|
-| `YOUR_COMPANY` | `metadata.md`, `export_presets.cfg` | The reverse-DNS bundle identifier. **Permanent once used.** Lowercase, no spaces |
+| `YOUR_COMPANY` | `metadata.md` | The reverse-DNS bundle identifier. **Permanent once used.** Lowercase, no spaces. Not committed: CI injects it, see `SECRETS.md` |
 | `YOUR_LEGAL_NAME` | `metadata.md`, both HTML pages, `LICENSE` | Name shown as copyright holder |
 | `YOUR_SUPPORT_EMAIL` | both HTML pages | Consider a dedicated address rather than a personal one, it goes on a public page |
 | `YOUR_GITHUB_USERNAME` | `metadata.md` | Only if hosting the pages on GitHub Pages |
@@ -52,9 +53,9 @@ requests.
 The listing material is done. These code and config items are not, and each will
 stop a submission:
 
-- [ ] Real bundle identifier in `export_presets.cfg:41` (currently
-      `com.yourcompany.soapescape`)
-- [ ] `application/app_store_team_id` is empty
+- [x] ~~Bundle identifier and team ID~~ handled: this repo is public, so both
+      are injected at build time by `tools/configure_ios_build.py` from CI
+      environment variables rather than committed. See `SECRETS.md`
 - [x] ~~Icon slots empty~~ done: wired to `SoapEscape_AppIcon_1024.png`
 - [x] ~~`ITSAppUsesNonExemptEncryption` not set~~ done
 - [x] ~~Launch screen was dark teal~~ done: now `#fdf2f8`, matching the app
