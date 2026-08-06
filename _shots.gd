@@ -29,8 +29,8 @@ func _ready() -> void:
 	for lid in range(1, 4):
 		SaveData.mark_tutorial_shown(lid)
 
-	await _shot_gameplay("01_steer", 5, 0.86)
-	await _shot_gameplay("02_shield", 6, 0.52, true)
+	await _shot_gameplay("01_steer", 3, 0.98, false, false)
+	await _shot_gameplay("02_nearmiss", 6, 0.40, false, true)
 	await _shot_win("03_win")
 	await _shot_map("04_map")
 	await _shot_home("05_home")
@@ -41,7 +41,7 @@ func _ready() -> void:
 
 # ── Gameplay shots ─────────────────────────────────────────────────────────
 
-func _shot_gameplay(name: String, level_no: int, size: float, shield: bool = false) -> void:
+func _shot_gameplay(name: String, level_no: int, size: float, shield: bool = false, in_wet: bool = true) -> void:
 	GameData.current_level_index = level_no - 1
 	var game := preload("res://scenes/Game.tscn").instantiate()
 	add_child(game)
@@ -54,7 +54,7 @@ func _shot_gameplay(name: String, level_no: int, size: float, shield: bool = fal
 	var soap: Soap = game.get_node("Soap")
 	var world: Node2D = game.get_node("World")
 
-	var target_y := _find_photogenic_y(world)
+	var target_y := _find_photogenic_y(world, in_wet)
 	var pos := Vector2(_lane_x_for(world, target_y), target_y)
 
 	# The shield bubble roughly doubles the soap's visual footprint, which both
@@ -101,7 +101,7 @@ func _shot_gameplay(name: String, level_no: int, size: float, shield: bool = fal
 ## the first one that roughly fits. Taking the first match put the soap
 ## directly on top of a duck, which reads as a crash rather than a dodge, and
 ## left a drain grate colliding with the Dynamic Island.
-func _find_photogenic_y(world: Node2D) -> float:
+func _find_photogenic_y(world: Node2D, in_wet: bool) -> float:
 	var obstacles: Array[float] = []
 	var zones: Array[Vector2] = []   # (top, bottom)
 	for c in world.get_children():
@@ -123,14 +123,24 @@ func _find_photogenic_y(world: Node2D) -> float:
 		cy += 15.0
 		var score := 0.0
 
-		# Must sit inside a wet zone: that is what puts the blue tint and the
-		# "WET ZONE AHEAD" pill in frame, and it is the mechanic worth showing.
+		# Wet zones matter for the story, but Soap.gd lerps the body fill toward
+		# light blue while the soap is inside one, which drops it to roughly
+		# 1.2:1 against the blue tint and makes it vanish at thumbnail size.
+		# For the hero shot, sit the soap on the dry white lane with the zone
+		# just ahead: same story, lavender soap, far more contrast.
 		var in_zone := false
+		var zone_ahead := false
 		for z in zones:
 			if cy > z.x + 60.0 and cy < z.y - 60.0:
 				in_zone = true
-		if not in_zone:
-			continue
+			if z.x - cy > 120.0 and z.x - cy < 430.0:
+				zone_ahead = true
+		if in_wet:
+			if not in_zone:
+				continue
+		else:
+			if in_zone or not zone_ahead:
+				continue
 
 		# Penalties, not rejections. The late levels pack 32 to 44 obstacles
 		# into 4300 units, an average gap of ~134, so any hard "nothing within
@@ -196,12 +206,13 @@ func _shot_fail(name: String) -> void:
 
 func _shot_map(name: String) -> void:
 	# A map with real progress sells the game far better than an empty one.
-	for entry in [[1, 3], [2, 3], [3, 2], [4, 3], [5, 2], [6, 1]]:
+	for entry in [[1, 3], [2, 3], [3, 3], [4, 2], [5, 3], [6, 3], [7, 2], [8, 3], [9, 1]]:
 		SaveData.save_level_result(entry[0], entry[1])
+	GameData.current_level_index = 9
 	await _show_scene("res://scenes/MapScreen.tscn", name, 60)
 
 func _shot_home(name: String) -> void:
-	for entry in [[1, 3], [2, 3], [3, 2], [4, 3], [5, 2], [6, 1]]:
+	for entry in [[1, 3], [2, 3], [3, 3], [4, 2], [5, 3], [6, 3], [7, 2], [8, 3], [9, 1]]:
 		SaveData.save_level_result(entry[0], entry[1])
 	# The logo bobs on a sine; hold past the first frames so it is mid-drift
 	# rather than snapped to its starting position.

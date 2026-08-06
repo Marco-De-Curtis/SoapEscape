@@ -29,24 +29,41 @@ BG_BOTTOM = (243, 232, 255)   # #f3e8ff
 FREDOKA = "fonts/Fredoka-VariableFont.ttf.ttf"
 NUNITO = "fonts/Nunito-VariableFont_wght.ttf"
 
-# Frame geometry. The caption needs roughly the top sixth; the rest is the
-# game at its true aspect ratio.
-FRAME_W = 1104
-FRAME_H = round(FRAME_W * H / W)      # 2399, aspect preserved
+# Frame geometry. Widened from 1104 to 1224 (48px margins instead of 108):
+# for a game whose whole legibility problem is scale, giving away 16% of
+# linear size to decorative margin is a bad trade.
+FRAME_W = 1224
 FRAME_X = (W - FRAME_W) // 2
-FRAME_Y = 420
-CORNER = 52
+FRAME_Y = 560                 # band raised from 420 to fit 2 headline lines + sub
+FRAME_MAX_H = H - FRAME_Y - 48
+CORNER = 56
 
+# The game draws its own simulated Dynamic Island: a black pill at the top of
+# every scene, inherited from the HTML design mockups. On a real iPhone the
+# hardware island already occupies that space, so it is redundant there and
+# it is dead pixels here. Cropped out of every capture, stopping short of the
+# HUD bar at y=190.
+CROP_TOP = 176
+
+# Slot 1 must answer "what is this?", not "how do I control it?" Controls are
+# a later concern. Slot 2 is the win screen because it is the highest-contrast
+# frame in the set and the only one that reads at search-thumbnail size.
 CAPTIONS = {
-    "01_steer":  ("One thumb.\nTwo directions.", "That is the entire control scheme."),
-    "02_shield": ("One shield.\nOne free mistake.", "Spend it carefully. They are rare."),
-    "03_win":    ("Three stars means you\nbarely lost a crumb.", "Good luck with that on level ten."),
-    "04_map":    ("Ten levels.\nThey get meaner.", "Narrower, faster, hungrier."),
-    "05_home":   ("No ads. No purchases.\nNo internet.", "Just a bar of soap and some bad luck."),
-    "06_fail":   ("Or melt trying.", "The drain is not going anywhere."),
+    "01_steer":    ("You are the soap.\nDo not melt.",
+                    "Lean left, lean right, stay in one piece."),
+    "03_win":      ("Three stars.\nOne perfect run.",
+                    "Cross the line with 70% of yourself left."),
+    "04_map":      ("Ten levels.\nThey get meaner.",
+                    "Narrower, faster, hungrier."),
+    "02_nearmiss": ("Ducks. Grates.\nSponges. Combs.",
+                    "Everything in this bathroom wants a piece."),
+    "05_home":     ("No ads. No purchases.\nNo accounts.",
+                    "Works on a plane. Collects nothing."),
 }
 
-ORDER = ["01_steer", "02_shield", "03_win", "04_map", "05_home", "06_fail"]
+# The fail screen is deliberately absent. A red error modal with two greyed-out
+# rows is indistinguishable from a crash dialog at thumbnail size.
+ORDER = ["01_steer", "03_win", "04_map", "02_nearmiss", "05_home"]
 
 
 def font(path, size, variation):
@@ -83,27 +100,58 @@ def draw_centred(draw, text, f, y, fill, line_gap=14):
     return y
 
 
+def trim(im):
+    """Drop the simulated Dynamic Island, then any flat dead space at the
+    bottom. The win screen wasted a third of its height on empty pink below
+    the buttons, shrinking everything above it for nothing."""
+    im = im.crop((0, CROP_TOP, im.width, im.height))
+    px = im.load()
+    last = im.height - 1
+    for y in range(im.height - 1, -1, -1):
+        ref = px[4, y]
+        if any(sum(abs(a - b) for a, b in zip(px[x, y], ref)) > 24
+               for x in range(0, im.width, 7)):
+            last = y
+            break
+    bottom = min(im.height, last + 70)
+    return im.crop((0, 0, im.width, bottom))
+
+
+def fit(size):
+    """Largest frame that respects both the width and the height budget."""
+    w, h = size
+    fw = FRAME_W
+    fh = round(fw * h / w)
+    if fh > FRAME_MAX_H:
+        fh = FRAME_MAX_H
+        fw = round(fh * w / h)
+    return fw, fh
+
+
 def compose(raw_path, headline, sub):
     canvas = background()
     draw = ImageDraw.Draw(canvas)
 
     head_f = font(FREDOKA, 84, "SemiBold")
-    sub_f = font(NUNITO, 40, "SemiBold")
+    sub_f = font(NUNITO, 52, "SemiBold")
 
-    y = draw_centred(draw, headline, head_f, 132, PINK, line_gap=26)
-    draw_centred(draw, sub, sub_f, y + 26, PURPLE)
+    y = draw_centred(draw, headline, head_f, 150, PINK, line_gap=28)
+    draw_centred(draw, sub, sub_f, y + 34, PURPLE)
 
-    shot = Image.open(raw_path).convert("RGB").resize((FRAME_W, FRAME_H), Image.LANCZOS)
-    mask = rounded_mask((FRAME_W, FRAME_H), CORNER)
+    shot = trim(Image.open(raw_path).convert("RGB"))
+    fw, fh = fit(shot.size)
+    fx = (W - fw) // 2
+    shot = shot.resize((fw, fh), Image.LANCZOS)
+    mask = rounded_mask((fw, fh), CORNER)
 
     # Soft drop shadow so the frame lifts off the background.
     shadow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    sd = Image.new("RGBA", (FRAME_W, FRAME_H), (124, 58, 237, 60))
-    shadow.paste(sd, (FRAME_X, FRAME_Y + 18), mask)
+    sd = Image.new("RGBA", (fw, fh), (124, 58, 237, 60))
+    shadow.paste(sd, (fx, FRAME_Y + 18), mask)
     shadow = shadow.filter(ImageFilter.GaussianBlur(26))
     canvas = Image.alpha_composite(canvas.convert("RGBA"), shadow).convert("RGB")
 
-    canvas.paste(shot, (FRAME_X, FRAME_Y), mask)
+    canvas.paste(shot, (fx, FRAME_Y), mask)
     return canvas
 
 

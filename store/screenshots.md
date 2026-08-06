@@ -23,97 +23,55 @@ strongest frames there.
 
 ---
 
-## Shot list
+## The set
 
-Ordered as they should appear in the listing.
+Generated, not hand-made. `_shots.gd` drives the real game into each state and
+captures the framebuffer; `tools/compose_screenshots.py` adds the caption band.
+To regenerate after a game change, see "How to capture" below.
 
-| # | Screen | What to capture | Suggested caption overlay |
+Committed in `store/screenshots/`:
+- `final/` — captioned, upload these
+- `raw/` — the untouched captures, if you want a plain set instead
+
+| Slot | File | Caption | Why it is here |
 |---|---|---|---|
-| 1 | In-game, Level 5 | Soap mid-lean between two obstacles, wet zone visible ahead with the "WET ZONE AHEAD" pill | Lean left. Lean right. Try not to melt. |
-| 2 | In-game, low health | Soap at panicked orange or critical red, size meter clearly low, obstacle close | Your face is the health bar |
-| 3 | Win screen | Three stars awarded, victory face with star eyes | Three stars means you barely lost a crumb |
-| 4 | Level map | Several levels complete with stars, later ones locked | Ten levels. They get meaner |
-| 5 | Home screen | Logo with the mascot, star progress line | (no caption, let the logo carry it) |
-| 6 | Fail screen | The "dissolved" variant | Or don't |
+| 1 | `1_steer.png` | You are the soap. Do not melt. | Answers "what is this?" Slot 1 must not be about controls |
+| 2 | `2_win.png` | Three stars. One perfect run. | Highest-contrast frame in the set, the only one that reads at search-thumbnail size. Deliberately placed second, since slots 1-2 are all that show in search results |
+| 3 | `3_map.png` | Ten levels. They get meaner. | Proof of content volume |
+| 4 | `4_nearmiss.png` | Ducks. Grates. Sponges. Combs. | Obstacle variety plus the finish line |
+| 5 | `5_home.png` | No ads. No purchases. No accounts. | The pitch, and the last objection answered |
 
-Six is a good number. Do not pad to ten with near-duplicates.
+The fail screen was captured and then cut. A red error modal with two greyed-out
+rows is indistinguishable from a crash dialog at thumbnail size. It stays in
+`raw/06_fail.png` if you disagree.
 
-Captions are optional. If you add them, keep them in the game's own fonts
-(Fredoka for headlines, Nunito for body) and the brand pink `#d63384` on the
-off-white `#fdf2f8`, so the store page and the game read as one thing.
+## Known limitation
 
----
+The soap is about 8% of the frame width and the obstacles are physically larger
+than it, so the gameplay shots will never punch as hard as the win screen. Two
+game-side changes would fix it, both of which change the shipping product and
+so are decisions rather than tasks:
+
+1. **Pull the camera in.** The play channel is only ~56% of screen width; the
+   rest is decorative tiling. Zooming ~1.5x would take the soap to ~12% of the
+   frame. It also reduces how far ahead the player can see, which makes the
+   game harder, so it is a difficulty change as much as a visual one.
+2. **Raise the soap's contrast.** `Soap.gd:285` lerps the body fill toward light
+   blue while inside a wet zone, dropping it to roughly 1.2:1 against the blue
+   tint. The soap camouflages exactly when the player most needs to see it.
+   The screenshots dodge this by staying on the dry lane, but the readability
+   problem is real during play.
 
 ## How to capture
 
-### Option A: on device (best quality, needs the app installed)
-
-Once you have a TestFlight build, take screenshots on an iPhone 17 Pro Max, 16
-Pro Max or 15 Pro Max. Those produce 1320 x 2868 natively with no scaling and no
-post-processing. This is the least fiddly route and the one to use if you have
-access to any of those handsets.
-
-Trim the status bar only if it shows something distracting. Apple permits the
-real status bar.
-
-### Option B: iOS Simulator (needs a Mac or a cloud Mac session)
-
-Boot the iPhone 17 Pro Max simulator and use `Device > Screenshot`, or:
+The committed set was produced on Linux with Xvfb:
 
 ```
-xcrun simctl io booted screenshot --type=png shot1.png
+godot --path . --resolution 1320x2868 --rendering-driver opengl3 \
+      --audio-driver Dummy _shots.tscn
+python3 tools/compose_screenshots.py <captures> store/screenshots/final
 ```
 
-Output is already 1320 x 2868.
+Captures land in the Godot user data directory. On a machine with a display,
+drop the `xvfb-run` wrapper.
 
-### Option C: desktop build (no Mac needed)
-
-The project's stretch mode is `canvas_items` with `expand`, so the UI reflows
-correctly at any resolution rather than letterboxing. That means the Windows or
-Linux export can render true 1320 x 2868 frames.
-
-1. Export the desktop preset.
-2. Launch with the target resolution forced:
-
-   ```
-   SoapEscape.exe --resolution 1320x2868
-   ```
-
-   The window will be taller than your monitor. That is fine. The framebuffer is
-   the full size and that is what gets captured.
-
-3. Capture with the helper below rather than an OS screenshot tool, because an OS
-   tool only captures the visible portion of an oversized window.
-
-**Helper script** — `store/_screenshot_helper.gd` in this repo saves a full
-framebuffer PNG to the user data folder when you press F12.
-
-To use it, temporarily add it as an autoload in `project.godot`:
-
-```
-[autoload]
-ScreenshotHelper="*res://store/_screenshot_helper.gd"
-```
-
-Play to the frame you want, press F12, then find the PNG in the Godot user data
-directory (`%APPDATA%\Godot\app_userdata\Soap Escape\` on Windows).
-
-**Remove the autoload line before doing an iOS release build.** The file is named
-with a leading underscore so the export preset's `_*.gd` exclude filter drops it
-from the package, which means an autoload pointing at it would fail at runtime in
-a shipped build.
-
-The one caveat with this route: desktop rendering is not pixel-identical to iOS
-Metal rendering. For this game, which draws everything with flat-coloured
-polygons and no shaders, the difference is not visible. Verify on device once you
-have TestFlight, and reshoot if anything looks off.
-
----
-
-## Before uploading
-
-- [ ] Every file is exactly 1320 x 2868
-- [ ] No alpha channel (`sips -s format png` or any flattening export)
-- [ ] No placeholder or debug text visible
-- [ ] Star counts and level states look like real progress, not an empty save
-- [ ] Ordered so shots 1 and 2 are the strongest
