@@ -9,6 +9,12 @@ const NODE_POSITIONS: Array[Vector2] = [
 	Vector2(105, 148), Vector2(268,  76)
 ]
 
+# Matches HUD.gd's TOP_Y. The map used to anchor its top bar at y=0, so on any
+# iPhone with a Dynamic Island the title and the "unlocked" pill rendered
+# underneath the status bar. The whole map shifts down with the bar so the
+# first level node still clears it.
+const TOP_INSET := 56.0
+
 const C_PATH   := Color("#f9a8d4")
 const C_DONE   := Color("#86efac")
 const C_LOCKED := Color("#e5e7eb")
@@ -26,6 +32,10 @@ func _ready() -> void:
 	_build_bubbles()
 	_build_top_bar()
 	_build_nodes()
+
+## Node layout shifted clear of the status bar / Dynamic Island.
+func _node_pos(i: int) -> Vector2:
+	return NODE_POSITIONS[i] + Vector2(0.0, TOP_INSET)
 
 # ── Background grid (rgba(249,168,212,0.1), 22x22 — from main README, not the tokens file) ──
 
@@ -56,8 +66,10 @@ func _draw() -> void:
 func _build_top_bar() -> void:
 	var bar := ColorRect.new()
 	bar.color = Color(1.0, 1.0, 1.0, 0.92)
-	bar.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	bar.custom_minimum_size = Vector2(0.0, 56.0)
+	bar.anchor_left  = 0.0
+	bar.anchor_right = 1.0
+	bar.offset_top    = TOP_INSET
+	bar.offset_bottom = TOP_INSET + 56.0
 	add_child(bar)
 
 	var title := Label.new()
@@ -124,8 +136,8 @@ func _build_path() -> void:
 	var GAP  :=  9.0
 
 	for i in NODE_POSITIONS.size() - 1:
-		var a    := NODE_POSITIONS[i]
-		var b    := NODE_POSITIONS[i + 1]
+		var a    := _node_pos(i)
+		var b    := _node_pos(i + 1)
 		var dir  := (b - a).normalized()
 		var total := a.distance_to(b)
 		var t       := 0.0
@@ -174,7 +186,7 @@ func _build_nodes() -> void:
 	for i in LevelData.LEVELS.size():
 		var lv: Dictionary = LevelData.LEVELS[i]
 		var lid      := int(lv.get("id", i + 1))
-		var pos      := NODE_POSITIONS[i]
+		var pos      := _node_pos(i)
 		var done     := SaveData.is_level_complete(lid)
 		var unlocked := is_unlocked(i)
 		var stars    := SaveData.get_stars(lid)

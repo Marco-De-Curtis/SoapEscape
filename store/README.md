@@ -99,7 +99,8 @@ stop a submission:
 - [ ] Name, subtitle, description, keywords, promo text from `metadata.md`
 - [ ] Support and Privacy URLs live and loading
 - [ ] Icon 1024x1024, no alpha
-- [ ] At least three 6.9" screenshots at exactly 1320 x 2868
+- [ ] 6.9" screenshots at exactly 1320 x 2868 (1 minimum, 10 max; five prepared)
+- [ ] App previews: optional, skipping for v1.0
 - [ ] Categories set: Arcade primary, Casual secondary
 - [ ] Age rating questionnaire completed (result should be 4+)
 - [ ] App Privacy set to Data Not Collected
