@@ -27,9 +27,9 @@
 #
 # See store/SECRETS.md for what is secret and what is not.
 #
-# Proven on Codemagic through to a signed SoapEscape.ipa: Godot export,
-# certificate and profile fetch, and the Xcode archive all succeed. The
-# TestFlight upload is the last step still being shaken out.
+# Proven end to end on Codemagic: Godot export, certificate and profile fetch,
+# Xcode archive, and upload to App Store Connect, where the build processes to
+# state VALID and READY_FOR_BETA_TESTING.
 
 workflows:
   ios-testflight:
@@ -265,14 +265,21 @@ workflows:
           set -euo pipefail
           IPA=$(ls build/ios/ipa/*.ipa | head -1)
           echo "Uploading $(basename "$IPA")"
-          # Deliberately --testflight and not --app-store: get it onto a real
-          # phone and play all ten levels before anything reaches a reviewer.
+          # Upload only. Neither --testflight nor --app-store.
+          #
+          # --testflight submits the build for EXTERNAL beta review, which
+          # requires Beta App Review Information (name, phone, email) and a
+          # feedback address to be filled in first. Internal testing needs none
+          # of that: once Apple finishes processing, the build is immediately
+          # READY_FOR_BETA_TESTING and installable by the account holder.
+          #
+          # So the upload is the job here. Adding --testflight only made the
+          # step fail after the build had already landed successfully.
           app-store-connect publish \
             --path "$IPA" \
             --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
             --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key "@file:$ASC_KEY" \
-            --testflight
+            --private-key "@file:$ASC_KEY"
 
     artifacts:
       - build/ios/ipa/*.ipa
