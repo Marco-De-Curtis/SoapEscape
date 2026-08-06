@@ -37,7 +37,7 @@ you can make.
 
 Everything else is resolved: the bundle identifier and Team ID are registered
 with Apple and injected at build time (`SECRETS.md`), the support email is set
-to soapyescape@gmail.com, and the Pages URLs are filled in.
+to soapyescape.support@gmail.com, and the Pages URLs are filled in.
 
 ---
 
