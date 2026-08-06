@@ -18,7 +18,7 @@ Placeholders to replace before submitting are written in `ALL_CAPS_UNDERSCORED`.
 | Primary language | English (U.S.) |
 | Primary category | Games > Arcade |
 | Secondary category | Games > Casual |
-| Copyright | `2026 YOUR_LEGAL_NAME` |
+| Copyright | `2026 Marco De Curtis` |
 | Age rating | 4+ (see questionnaire below) |
 | Price | Free |
 

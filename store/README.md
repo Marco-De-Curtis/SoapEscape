@@ -28,16 +28,13 @@ repo root, because that is the directory GitHub Pages serves from:
 
 ## Placeholders to replace
 
-Search this folder for these before submitting. All of them are decisions only
-you can make.
+None left. All resolved:
 
-| Placeholder | Where | Notes |
-|---|---|---|
-| `YOUR_LEGAL_NAME` | `metadata.md`, `LICENSE`, both pages in `docs/` | The name shown as copyright holder on the listing and on both public pages |
-
-Everything else is resolved: the bundle identifier and Team ID are registered
-with Apple and injected at build time (`SECRETS.md`), the support email is set
-to soapyescape.support@gmail.com, and the Pages URLs are filled in.
+- Listing name `Soapy Escape`, copyright holder Marco De Curtis
+- Bundle identifier and Team ID registered with Apple, injected at build time
+  rather than committed (`SECRETS.md`)
+- Support address soapyescape.support@gmail.com
+- Support and Privacy URLs filled in, pending the Pages switch below
 
 ---
 
