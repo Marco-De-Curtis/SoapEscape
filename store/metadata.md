@@ -120,12 +120,12 @@ First release. Ten levels, three stars each, one very anxious bar of soap.
 
 | Field | Value |
 |---|---|
-| Support URL | `https://YOUR_GITHUB_USERNAME.github.io/soapescape/support.html` |
+| Support URL | `https://marco-de-curtis.github.io/SoapEscape/support.html` |
 | Marketing URL | Optional, leave blank |
-| Privacy Policy URL | `https://YOUR_GITHUB_USERNAME.github.io/soapescape/privacy-policy.html` |
+| Privacy Policy URL | `https://marco-de-curtis.github.io/SoapEscape/privacy-policy.html` |
 
-`store/support.html` and `store/privacy-policy.html` in this repo are ready to
-host. See `store/README.md` for the GitHub Pages steps.
+Both pages live in `docs/` and are served by GitHub Pages from this repo.
+See `store/README.md` for the one switch that turns them on.
 
 ---
 

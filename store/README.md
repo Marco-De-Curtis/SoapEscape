@@ -12,11 +12,17 @@ it is packaged into the game: the iOS export preset's `exclude_filter` drops
 |---|---|
 | `metadata.md` | Every App Store Connect text field, ready to paste |
 | `screenshots.md` | Size spec, shot list, and three ways to capture them |
-| `privacy-policy.html` | Hostable privacy policy page (URL is mandatory) |
-| `support.html` | Hostable support page (URL is mandatory) |
 | `_screenshot_helper.gd` | Dev tool for capturing full-resolution frames |
 | `BUILD_WITHOUT_A_MAC.md` | How to build and ship iOS without owning a Mac |
 | `SECRETS.md` | What is secret, and where each signing value goes |
+
+The two required web pages are not in this folder. They live in `docs/` at the
+repo root, because that is the directory GitHub Pages serves from:
+
+| File | What it is |
+|---|---|
+| `../docs/privacy-policy.html` | Privacy policy (URL is mandatory) |
+| `../docs/support.html` | Support page (URL is mandatory) |
 
 ---
 
@@ -27,28 +33,35 @@ you can make.
 
 | Placeholder | Where | Notes |
 |---|---|---|
-| `YOUR_COMPANY` | `metadata.md` | The reverse-DNS bundle identifier. **Permanent once used.** Lowercase, no spaces. Not committed: CI injects it, see `SECRETS.md` |
-| `YOUR_LEGAL_NAME` | `metadata.md`, both HTML pages, `LICENSE` | Name shown as copyright holder |
-| `YOUR_SUPPORT_EMAIL` | both HTML pages | Consider a dedicated address rather than a personal one, it goes on a public page |
-| `YOUR_GITHUB_USERNAME` | `metadata.md` | Only if hosting the pages on GitHub Pages |
+| `YOUR_LEGAL_NAME` | `metadata.md`, `LICENSE`, both pages in `docs/` | The name shown as copyright holder on the listing and on both public pages |
+
+Everything else is resolved: the bundle identifier and Team ID are registered
+with Apple and injected at build time (`SECRETS.md`), the support email is set
+to soapyescape@gmail.com, and the Pages URLs are filled in.
 
 ---
 
 ## Hosting the two required pages
 
 Apple will not accept a submission without a working Support URL and Privacy
-Policy URL. Both must resolve publicly before you submit. The cheapest route:
+Policy URL, and both must resolve publicly before you submit.
 
-1. Create a public repository, for example `soapescape-site`.
-2. Copy `privacy-policy.html` and `support.html` into it.
-3. Settings > Pages > Source: `main`, folder `/ (root)`. Save.
-4. Wait a minute, then confirm both URLs load:
-   - `https://YOUR_GITHUB_USERNAME.github.io/soapescape-site/support.html`
-   - `https://YOUR_GITHUB_USERNAME.github.io/soapescape-site/privacy-policy.html`
-5. Paste those URLs into App Store Connect.
+The pages are already committed to `docs/`. This repository is public, so no
+second repository is needed. Turn Pages on once:
+
+1. Repository **Settings** > **Pages**
+2. Source: **Deploy from a branch**
+3. Branch: `main`, folder: **`/docs`**. Save.
+4. Wait a minute or two for the first deploy, then confirm both load:
+   - https://marco-de-curtis.github.io/SoapEscape/support.html
+   - https://marco-de-curtis.github.io/SoapEscape/privacy-policy.html
+5. Paste those two URLs into App Store Connect.
+
+Note the branch: the pages must be on `main` for Pages to serve them, so this
+work has to be merged before the URLs go live.
 
 The pages are self-contained. No build step, no dependencies, no external
-requests.
+requests, so nothing can break them at deploy time.
 
 ---
 
