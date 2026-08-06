@@ -9,7 +9,7 @@
 | Also accepted | 1290 x 2796, or 1260 x 2736 |
 | Format | PNG or JPEG, sRGB |
 | Transparency | Not allowed. Flatten any alpha before uploading |
-| Count | 3 minimum, 10 maximum |
+| Count | 1 minimum, 10 maximum (Apple requires at least one per supported device type) |
 
 Apple downscales the 6.9" set automatically to populate every smaller iPhone
 listing, so this is the only size you need. The game is iPhone only
@@ -40,6 +40,12 @@ Committed in `store/screenshots/`:
 | 3 | `3_map.png` | Ten levels. They get meaner. | Proof of content volume |
 | 4 | `4_nearmiss.png` | Ducks. Grates. Sponges. Combs. | Obstacle variety plus the finish line |
 | 5 | `5_home.png` | No ads. No purchases. No accounts. | The pitch, and the last objection answered |
+
+App previews are the other thing that upload box accepts. They are 15-30 second
+videos, up to three, and Apple states they are optional. Skipped for v1.0: they
+must be real device screen recordings, Apple is strict about their dimensions
+and frame rate, and they are a common source of metadata rejections for
+something that is not required.
 
 The fail screen was captured and then cut. A red error modal with two greyed-out
 rows is indistinguishable from a crash dialog at thumbnail size. It stays in
