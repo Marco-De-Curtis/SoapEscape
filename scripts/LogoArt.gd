@@ -57,7 +57,7 @@ static func paint_icon(ci: CanvasItem, rect: Rect2) -> void:
 
 	# Water fills the lower third with a wavy surface, so the scene reads as
 	# "soap in a bath" without needing a single prop.
-	var surface := p.y + s.y * 0.60
+	var surface := p.y + s.y * 0.635
 	var wave := PackedVector2Array()
 	for i in 65:
 		var t: float = float(i) / 64.0
@@ -77,13 +77,18 @@ static func paint_icon(ci: CanvasItem, rect: Rect2) -> void:
 	ci.draw_colored_polygon(band, Color(1, 1, 1, 0.16))
 
 	# Bubbles: few and large, so they survive being scaled to a home screen
-	for b in [[Vector2(150, 800), 46.0], [Vector2(300, 905), 30.0],
-			  [Vector2(880, 830), 38.0], [Vector2(742, 940), 24.0]]:
+	for b in [[Vector2(150, 820), 46.0], [Vector2(296, 928), 30.0],
+			  [Vector2(884, 852), 38.0], [Vector2(742, 952), 24.0]]:
 		var c := p + (b[0] as Vector2) * u
 		ci.draw_arc(c, float(b[1]) * u, 0.0, TAU, 40, Color(1, 1, 1, 0.75), 7.0 * u, true)
 
-	# The character, big enough to be the whole story
-	SoapArt.paint(ci, p + Vector2(512.0, 470.0) * u, 15.6 * u, SoapArt.CALM)
+	# The character, big enough to be the whole story. At the old 15.6 the soap
+	# filled barely half the canvas and left the top third as empty sky, which
+	# is unreadable once Apple scales the icon to ~60px on a home screen. At 20
+	# it spans ~70% of the width and straddles the waterline, so it reads as
+	# floating in the bath. tools/generate_app_icon.py mirrors these three
+	# numbers — change them here and re-run it.
+	SoapArt.paint(ci, p + Vector2(512.0, 470.0) * u, 20.0 * u, SoapArt.CALM)
 
 ## Square lockup — works down to app-icon sizes.
 static func paint_badge(ci: CanvasItem, centre: Vector2, scale: float = 1.0) -> void:

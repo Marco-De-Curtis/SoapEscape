@@ -16,8 +16,9 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Soap Escape"
 run/main_scene="res://scenes/Main.tscn"
+config/icon="res://SoapEscape_AppIcon_1024.png"
 config/features=PackedStringArray("4.7", "Mobile")
-boot_splash/bg_color=Color(0.086, 0.38, 0.58, 1)
+boot_splash/bg_color=Color(0.992157, 0.94902, 0.972549, 1)
 boot_splash/show_image=false
 
 [autoload]

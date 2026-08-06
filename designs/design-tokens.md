@@ -1,4 +1,4 @@
-# Slipaway — Design Tokens (Godot Reference)
+# Soap Escape — Design Tokens (Godot Reference)
 
 Extracted and verified against the actual rendered HTML (computed styles checked, not just source CSS). Use these values exactly. No substitutions, no "close enough" colors or fonts.
 
@@ -44,7 +44,7 @@ Two fonts only. Bundle the TTFs, do not substitute system fonts.
 
 | Element | Font | Size | Weight | Color |
 |---|---|---|---|---|
-| App title "Slipaway!" | Fredoka One | 52px | 400 | `#d63384` ("Slip") + `#7c3aed` ("!") |
+| App title "Soap Escape" | Fredoka One | 52px | 400 | `#d63384` ("Soap") + `#7c3aed` ("Escape") |
 | Level name on map | Nunito | 9px | 600 | `#7c3aed` |
 | Level number in node | system sans | 15px | 700 | `#ffffff` |
 | In-game level name | Nunito | 13px | 700 | `#d63384` |

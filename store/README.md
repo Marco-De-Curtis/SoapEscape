@@ -1,0 +1,111 @@
+# App Store submission kit — Soapy Escape
+
+The App Store listing is **Soapy Escape**; "Soap Escape" was already taken.
+Everywhere else, on the home screen, in the logo, in the bundle ID and in this
+repo, the game is still Soap Escape. That difference is intentional.
+
+Everything needed for the App Store Connect listing lives in this folder. None of
+it is packaged into the game: the iOS export preset's `exclude_filter` drops
+`_*.gd`, and the rest are Markdown and HTML that Godot does not import.
+
+| File | What it is |
+|---|---|
+| `metadata.md` | Every App Store Connect text field, ready to paste |
+| `screenshots.md` | Size spec, shot list, and three ways to capture them |
+| `_screenshot_helper.gd` | Dev tool for capturing full-resolution frames |
+| `BUILD_WITHOUT_A_MAC.md` | How to build and ship iOS without owning a Mac |
+| `SECRETS.md` | What is secret, and where each signing value goes |
+
+The two required web pages are not in this folder. They live in `docs/` at the
+repo root, because that is the directory GitHub Pages serves from:
+
+| File | What it is |
+|---|---|
+| `../docs/privacy-policy.html` | Privacy policy (URL is mandatory) |
+| `../docs/support.html` | Support page (URL is mandatory) |
+
+---
+
+## Placeholders to replace
+
+None left. All resolved:
+
+- Listing name `Soapy Escape`, copyright holder Marco De Curtis
+- Bundle identifier and Team ID registered with Apple, injected at build time
+  rather than committed (`SECRETS.md`)
+- Support address soapyescape.support@gmail.com
+- Support and Privacy URLs filled in, pending the Pages switch below
+
+---
+
+## Hosting the two required pages
+
+Apple will not accept a submission without a working Support URL and Privacy
+Policy URL, and both must resolve publicly before you submit.
+
+The pages are already committed to `docs/`. This repository is public, so no
+second repository is needed. Turn Pages on once:
+
+1. Repository **Settings** > **Pages**
+2. Source: **Deploy from a branch**
+3. Branch: `main`, folder: **`/docs`**. Save.
+4. Wait a minute or two for the first deploy, then confirm both load:
+   - https://marco-de-curtis.github.io/SoapEscape/support.html
+   - https://marco-de-curtis.github.io/SoapEscape/privacy-policy.html
+5. Paste those two URLs into App Store Connect.
+
+Note the branch: the pages must be on `main` for Pages to serve them, so this
+work has to be merged before the URLs go live.
+
+The pages are self-contained. No build step, no dependencies, no external
+requests, so nothing can break them at deploy time.
+
+---
+
+## Still outstanding in the repo
+
+The listing material is done. These code and config items are not, and each will
+stop a submission:
+
+- [x] ~~Bundle identifier and team ID~~ handled: this repo is public, so both
+      are injected at build time by `tools/configure_ios_build.py` from CI
+      environment variables rather than committed. See `SECRETS.md`
+- [x] ~~Icon slots empty~~ done: wired to `SoapEscape_AppIcon_1024.png`
+- [x] ~~`ITSAppUsesNonExemptEncryption` not set~~ done
+- [x] ~~Launch screen was dark teal~~ done: now `#fdf2f8`, matching the app
+- [x] ~~No LICENSE file or asset attribution~~ done: `LICENSE` and
+      `THIRD_PARTY_NOTICES.md` added at the repo root
+
+---
+
+## Submission checklist
+
+**Account and setup**
+- [ ] Apple Developer Program membership active
+- [ ] Bundle ID registered at developer.apple.com
+- [ ] App Store Connect API key created and the `.p8` stored safely
+- [ ] App record created in App Store Connect
+
+**Build**
+- [ ] Repo blockers above resolved
+- [ ] Built with Xcode 26 or later against the iOS 26 SDK (mandatory since
+      28 April 2026)
+- [ ] Build uploaded and processed in TestFlight
+- [ ] All ten levels played through on a real iPhone
+
+**Listing**
+- [ ] Name, subtitle, description, keywords, promo text from `metadata.md`
+- [ ] Support and Privacy URLs live and loading
+- [ ] Icon 1024x1024, no alpha
+- [ ] At least three 6.9" screenshots at exactly 1320 x 2868
+- [ ] Categories set: Arcade primary, Casual secondary
+- [ ] Age rating questionnaire completed (result should be 4+)
+- [ ] App Privacy set to Data Not Collected
+- [ ] Export compliance answered
+- [ ] Review notes pasted, including the control explanation
+
+**Submit**
+- [ ] Pricing set to Free
+- [ ] Availability set (all territories, or a subset)
+- [ ] Release option chosen: manual release is safer for a first launch
+- [ ] Submit for review
