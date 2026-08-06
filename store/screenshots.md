@@ -4,15 +4,25 @@
 
 | Requirement | Value |
 |---|---|
-| Device class needed | iPhone 6.9" only |
-| Dimensions | **1320 x 2868** portrait (preferred) |
-| Also accepted | 1290 x 2796, or 1260 x 2736 |
+| Device class | Pick the size selector in App Store Connect to match the files |
+| 6.9" iPhone | **1320 x 2868** — `store/screenshots/final/` |
+| 6.5" iPhone | **1284 x 2778** — `store/screenshots/final_65/` |
+| Also accepted at 6.9" | 1290 x 2796, or 1260 x 2736 |
+| Also accepted at 6.5" | 1242 x 2688 |
 | Format | PNG or JPEG, sRGB |
 | Transparency | Not allowed. Flatten any alpha before uploading |
 | Count | 1 minimum, 10 maximum (Apple requires at least one per supported device type) |
 
 Apple downscales the 6.9" set automatically to populate every smaller iPhone
-listing, so this is the only size you need. The game is iPhone only
+listing, so 6.9" alone is normally enough.
+
+**If App Store Connect rejects the dimensions**, you are on the wrong device tab.
+The upload area has a size selector above it, and each class validates exactly:
+drop a 1320x2868 file into the 6.5" slot and it refuses. Either switch the
+selector to iPhone 6.9" Display, or upload `final_65/` instead. Both sets are
+committed because the two classes are different aspect ratios (0.4603 against
+0.4622), so one cannot simply be resized into the other without distorting the
+art. The game is iPhone only
 (`targeted_device_family=1`), so no iPad set is required.
 
 App Store Connect rejects files that are off by a single pixel. Check dimensions

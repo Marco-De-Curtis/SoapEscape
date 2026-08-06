@@ -8,17 +8,40 @@ polished listings do and what makes shots 1 and 2 work in search results.
 The game frame itself is never retouched, only scaled and rounded, so the
 listing still shows exactly what the app looks like.
 
-    python3 tools/compose_screenshots.py <raw_dir> <out_dir>
+    python3 tools/compose_screenshots.py <raw_dir> <out_dir> [WIDTHxHEIGHT]
 
-Output: 1320 x 2868 sRGB PNG, no alpha, which is what App Store Connect wants
-for the 6.9" iPhone class.
+Output: sRGB PNG, no alpha. Defaults to 1320x2868, the 6.9" iPhone class.
+Pass a size to target another class, e.g. 1284x2778 for 6.5".
 """
 
 import sys
 import pathlib
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
-W, H = 1320, 2868
+W, H = 1320, 2868   # 6.9" iPhone; overridden by the optional CLI argument
+
+
+def set_canvas(w, h):
+    """Rescale every layout constant to the target canvas.
+
+    App Store Connect validates dimensions exactly and rejects a file that is
+    off by a single pixel, so each device class needs its own render rather
+    than a resize of another class: 6.9" is 0.4603 aspect and 6.5" is 0.4622,
+    and squeezing one into the other visibly distorts the art.
+    """
+    global W, H, FRAME_W, FRAME_X, FRAME_Y, FRAME_MAX_H, CORNER, CROP_TOP
+    global HEAD_PX, SUB_PX, HEAD_Y
+    k = w / 1320.0
+    W, H = w, h
+    FRAME_W = round(1224 * k)
+    FRAME_X = (W - FRAME_W) // 2
+    FRAME_Y = round(560 * k)
+    FRAME_MAX_H = H - FRAME_Y - round(48 * k)
+    CORNER = round(56 * k)
+    CROP_TOP = round(176 * h / 2868.0)
+    HEAD_PX = round(84 * k)
+    SUB_PX = round(52 * k)
+    HEAD_Y = round(150 * k)
 
 # Brand palette, from designs/design-tokens.md
 PINK = (214, 51, 132)
@@ -37,6 +60,7 @@ FRAME_X = (W - FRAME_W) // 2
 FRAME_Y = 560                 # band raised from 420 to fit 2 headline lines + sub
 FRAME_MAX_H = H - FRAME_Y - 48
 CORNER = 56
+HEAD_PX, SUB_PX, HEAD_Y = 84, 52, 150
 
 # The game draws its own simulated Dynamic Island: a black pill at the top of
 # every scene, inherited from the HTML design mockups. On a real iPhone the
@@ -132,11 +156,11 @@ def compose(raw_path, headline, sub):
     canvas = background()
     draw = ImageDraw.Draw(canvas)
 
-    head_f = font(FREDOKA, 84, "SemiBold")
-    sub_f = font(NUNITO, 52, "SemiBold")
+    head_f = font(FREDOKA, HEAD_PX, "SemiBold")
+    sub_f = font(NUNITO, SUB_PX, "SemiBold")
 
-    y = draw_centred(draw, headline, head_f, 150, PINK, line_gap=28)
-    draw_centred(draw, sub, sub_f, y + 34, PURPLE)
+    y = draw_centred(draw, headline, head_f, HEAD_Y, PINK, line_gap=round(28 * W / 1320))
+    draw_centred(draw, sub, sub_f, y + round(34 * W / 1320), PURPLE)
 
     shot = trim(Image.open(raw_path).convert("RGB"))
     fw, fh = fit(shot.size)
@@ -158,6 +182,8 @@ def compose(raw_path, headline, sub):
 def main():
     raw_dir = pathlib.Path(sys.argv[1])
     out_dir = pathlib.Path(sys.argv[2])
+    if len(sys.argv) > 3:
+        set_canvas(*(int(v) for v in sys.argv[3].lower().split("x")))
     out_dir.mkdir(parents=True, exist_ok=True)
 
     for i, key in enumerate(ORDER, start=1):
