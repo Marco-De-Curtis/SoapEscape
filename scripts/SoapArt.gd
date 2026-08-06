@@ -60,7 +60,10 @@ static func eye_segments(state: int) -> int:
 	return 10 if state == CRITICAL else 16
 
 static func mouth_width(w: float) -> float:
-	return clampf(w * 0.060, 0.6, 2.6)
+	# No upper cap: in play the soap is at most 36px wide so this never exceeds
+	# ~2.2 anyway, but the logo and the 1024px app icon draw the same character
+	# far larger, and a fixed cap left them with a hairline smile.
+	return maxf(0.6, w * 0.060)
 
 static func cheek_alpha(state: int) -> float:
 	match state:

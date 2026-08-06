@@ -44,6 +44,47 @@ static func paint_wide(ci: CanvasItem, centre: Vector2, scale: float = 1.0,
 			SoapArt.rounded_rect(94.0 * scale, 12.0 * scale, 12.0 * scale)), PINK)
 		ci.draw_circle(centre + Vector2(124, -58).rotated(ang) * scale, 15.0 * scale, RED)
 
+## App Store icon. Deliberately different from the badge lockup: Apple renders
+## this at ~60px on a home screen, so it carries NO text, no small props and a
+## single large character. Fills `rect` edge to edge, fully opaque, square
+## corners — Apple applies the mask itself.
+static func paint_icon(ci: CanvasItem, rect: Rect2) -> void:
+	var p := rect.position
+	var s := rect.size
+	var u := s.x / 1024.0  # everything below is authored against a 1024 canvas
+
+	ci.draw_rect(rect, SKY)
+
+	# Water fills the lower third with a wavy surface, so the scene reads as
+	# "soap in a bath" without needing a single prop.
+	var surface := p.y + s.y * 0.60
+	var wave := PackedVector2Array()
+	for i in 65:
+		var t: float = float(i) / 64.0
+		wave.append(Vector2(p.x + s.x * t, surface + sin(t * PI * 2.6) * 26.0 * u))
+	wave.append(Vector2(p.x + s.x, p.y + s.y))
+	wave.append(Vector2(p.x, p.y + s.y))
+	ci.draw_colored_polygon(wave, WATER)
+
+	# A lighter band just under the surface gives the water some depth
+	var band := PackedVector2Array()
+	for i in 65:
+		var t: float = float(i) / 64.0
+		band.append(Vector2(p.x + s.x * t, surface + sin(t * PI * 2.6) * 26.0 * u))
+	for i in 65:
+		var t: float = 1.0 - float(i) / 64.0
+		band.append(Vector2(p.x + s.x * t, surface + sin(t * PI * 2.6) * 26.0 * u + 62.0 * u))
+	ci.draw_colored_polygon(band, Color(1, 1, 1, 0.16))
+
+	# Bubbles: few and large, so they survive being scaled to a home screen
+	for b in [[Vector2(150, 800), 46.0], [Vector2(300, 905), 30.0],
+			  [Vector2(880, 830), 38.0], [Vector2(742, 940), 24.0]]:
+		var c := p + (b[0] as Vector2) * u
+		ci.draw_arc(c, float(b[1]) * u, 0.0, TAU, 40, Color(1, 1, 1, 0.75), 7.0 * u, true)
+
+	# The character, big enough to be the whole story
+	SoapArt.paint(ci, p + Vector2(512.0, 470.0) * u, 15.6 * u, SoapArt.CALM)
+
 ## Square lockup — works down to app-icon sizes.
 static func paint_badge(ci: CanvasItem, centre: Vector2, scale: float = 1.0) -> void:
 	var ang := deg_to_rad(TILT)
