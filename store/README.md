@@ -23,7 +23,7 @@ you can make.
 | Placeholder | Where | Notes |
 |---|---|---|
 | `YOUR_COMPANY` | `metadata.md`, `export_presets.cfg` | The reverse-DNS bundle identifier. **Permanent once used.** Lowercase, no spaces |
-| `YOUR_LEGAL_NAME` | `metadata.md`, both HTML pages | Name shown as copyright holder |
+| `YOUR_LEGAL_NAME` | `metadata.md`, both HTML pages, `LICENSE` | Name shown as copyright holder |
 | `YOUR_SUPPORT_EMAIL` | both HTML pages | Consider a dedicated address rather than a personal one, it goes on a public page |
 | `YOUR_GITHUB_USERNAME` | `metadata.md` | Only if hosting the pages on GitHub Pages |
 
@@ -55,16 +55,11 @@ stop a submission:
 - [ ] Real bundle identifier in `export_presets.cfg:41` (currently
       `com.yourcompany.soapescape`)
 - [ ] `application/app_store_team_id` is empty
-- [ ] Every icon slot is empty. `SoapEscape_AppIcon_1024.png` exists in the repo
-      root but is not wired into the preset
-- [ ] `ITSAppUsesNonExemptEncryption` not set in `additional_plist_content`
-- [ ] Launch screen background is dark teal `Color(0.086, 0.38, 0.58)` while the
-      app background is pink `#fdf2f8`, so the app flashes the wrong colour on
-      every cold start
-- [ ] No LICENSE file, and no attribution record for the ten `.ogg` files in
-      `assets/audio/sfx/`. `assets/ASSETS_SETUP.md` recommends a CC0 pack but
-      nothing records what actually shipped. You assert content rights at
-      submission time
+- [x] ~~Icon slots empty~~ done: wired to `SoapEscape_AppIcon_1024.png`
+- [x] ~~`ITSAppUsesNonExemptEncryption` not set~~ done
+- [x] ~~Launch screen was dark teal~~ done: now `#fdf2f8`, matching the app
+- [x] ~~No LICENSE file or asset attribution~~ done: `LICENSE` and
+      `THIRD_PARTY_NOTICES.md` added at the repo root
 
 ---
 

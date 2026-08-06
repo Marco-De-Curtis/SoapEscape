@@ -1,0 +1,23 @@
+Copyright (c) 2026 YOUR_LEGAL_NAME. All rights reserved.
+
+Soap Escape, including its source code, game design, level data, generated
+artwork and the "Soap Escape" name and logo, is proprietary. No permission is
+granted to copy, modify, distribute, sublicense, or create derivative works
+from this software, in whole or in part, without prior written permission from
+the copyright holder.
+
+Bundled third-party assets are excluded from the above and remain under their
+own licences. See THIRD_PARTY_NOTICES.md for the full list, which covers the
+Fredoka and Nunito fonts (SIL Open Font License 1.1) and the sound effects in
+assets/audio/sfx/ (CC0 1.0 Universal).
+
+The Godot Engine, used to build this software, is licensed separately under the
+MIT License by its own authors.
+
+---
+
+NOTE: this is the conventional choice for a commercial app-store release, and
+it is a default rather than a decision that has been made for you. If you would
+rather the source be open, replace this file with an MIT or Apache-2.0 licence.
+Either way, replace YOUR_LEGAL_NAME above with the name that will appear as the
+copyright holder on the App Store listing.
