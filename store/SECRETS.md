@@ -60,6 +60,21 @@ Set these five in whichever CI you use. Names are what the build scripts expect.
 For `APP_STORE_CONNECT_PRIVATE_KEY`, paste the whole file including the
 `-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----` lines.
 
+### The integration name must match
+
+`codemagic.yaml` names the App Store Connect integration literally:
+
+```yaml
+integrations:
+  app_store_connect: Soapy Escape API Key
+```
+
+Codemagic will not accept the file without that block when publishing uses
+`auth: integration`, and the string has to match what you called the
+integration under Teams > Integrations > Apple Developer Portal, character for
+character. It cannot be an environment variable. Rename one side or the other
+until they agree.
+
 ### Adding them in Codemagic
 
 Codemagic UI > your app > Settings > Environment variables. Create a group
