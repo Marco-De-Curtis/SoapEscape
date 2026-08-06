@@ -1,4 +1,4 @@
-# App Store Connect metadata — Soap Escape v1.0
+# App Store Connect metadata — Soapy Escape v1.0
 
 Copy each block straight into the matching App Store Connect field. Character
 limits are Apple's; the counts in brackets are what the text below actually uses,
@@ -12,8 +12,9 @@ Placeholders to replace before submitting are written in `ALL_CAPS_UNDERSCORED`.
 
 | Field | Value |
 |---|---|
-| Bundle ID | `com.YOUR_COMPANY.soapescape` (must match `export_presets.cfg`) |
+| Bundle ID | Registered and selected in the app record. Kept out of this public repo; CI injects it, see `SECRETS.md` |
 | SKU | `SOAPESCAPE001` (internal only, never shown to users) |
+| Team ID | Set, kept out of this public repo. See `SECRETS.md` |
 | Primary language | English (U.S.) |
 | Primary category | Games > Arcade |
 | Secondary category | Games > Casual |
@@ -23,19 +24,19 @@ Placeholders to replace before submitting are written in `ALL_CAPS_UNDERSCORED`.
 
 ---
 
-## Name [11 / 30]
+## Name [12 / 30]
 
 ```
-Soap Escape
+Soapy Escape
 ```
 
-If you want the keyword weight, App Store search indexes the name field heavily.
-An alternative that stays readable:
+"Soap Escape" was already taken on the App Store, so the listing carries the
+extra letter. Nothing else does: the name under the icon on the home screen
+comes from the Godot project name and still reads "Soap Escape", the in-game
+logo is unchanged, and the bundle identifier is unaffected.
 
-```
-Soap Escape: Slide & Dodge
-```
-[26 / 30]
+Unlike the bundle ID, the listing name is not permanent. It can be changed with
+any future version submission.
 
 ---
 
@@ -45,7 +46,10 @@ Soap Escape: Slide & Dodge
 Slide, dodge, don't melt!
 ```
 
-Alternatives:
+Deliberately shares no words with the name, so between them they index five
+distinct terms: soapy, escape, slide, dodge, melt.
+
+Alternatives, if you change the name later:
 - `Don't melt before the drain` [27]
 - `A soapy one-thumb arcade run` [28]
 
@@ -86,14 +90,18 @@ No ads. No in-app purchases. No account. No internet needed. No data collected, 
 
 ---
 
-## Keywords [91 / 100]
+## Keywords [95 / 100]
 
 Comma separated, no spaces. Do not repeat words already in the name or subtitle,
 Apple indexes those separately.
 
 ```
-kawaii,cute,arcade,runner,dodge,reflex,onehand,casual,bubble,tilt,stars,offline,indie,skill
+kawaii,cute,arcade,runner,reflex,onehand,casual,bubble,bath,tilt,stars,offline,indie,skill,soap
 ```
+
+Changed from the first draft now the name is settled. Dropped `dodge`, which
+the subtitle already indexes, and added `soap` and `bath`: the name contains
+"soapy" rather than "soap", and Apple does not reliably stem one to the other.
 
 ---
 
@@ -159,8 +167,9 @@ Other answers:
 
 ## Export compliance
 
-The game uses no encryption. To stop App Store Connect asking on every upload,
-add this to `application/additional_plist_content` in the iOS export preset:
+The game uses no encryption. **Already applied** in
+`application/additional_plist_content`, so App Store Connect stops asking on
+every upload:
 
 ```xml
 <key>ITSAppUsesNonExemptEncryption</key>
