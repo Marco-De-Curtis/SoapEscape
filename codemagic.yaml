@@ -155,12 +155,38 @@ workflows:
 
           ASC_KEY="$HOME/asc_key.p8"
           normalise_pem APP_STORE_CONNECT_PRIVATE_KEY "$ASC_KEY" "PRIVATE KEY"
+          if ! openssl pkey -in "$ASC_KEY" -noout 2>/dev/null; then
+            echo "ERROR: APP_STORE_CONNECT_PRIVATE_KEY is not a usable private key." >&2
+            echo "  It starts with: $(head -1 "$ASC_KEY")" >&2
+            exit 1
+          fi
           echo "ASC_KEY=$ASC_KEY" >> "$CM_ENV"
 
           CERT_KEY="$HOME/cert_key.pem"
           if [ -n "${CERTIFICATE_PRIVATE_KEY:-}" ]; then
             normalise_pem CERTIFICATE_PRIVATE_KEY "$CERT_KEY" "RSA PRIVATE KEY"
             echo "  using the stored certificate key"
+
+            # Windows' bundled OpenSSH quietly ignores -m PEM in some versions
+            # and writes its own OPENSSH container instead. That is a perfectly
+            # good key, but neither openssl nor the Codemagic CLI can read it,
+            # and the CLI's only complaint is "Not a valid certificate private
+            # key". Convert it rather than sending the user back to regenerate.
+            if ! openssl rsa -in "$CERT_KEY" -noout 2>/dev/null; then
+              echo "  not a PEM RSA key, attempting conversion"
+              if ssh-keygen -p -P "" -N "" -m PEM -f "$CERT_KEY" >/dev/null 2>&1 \
+                 && openssl rsa -in "$CERT_KEY" -noout 2>/dev/null; then
+                echo "  converted to PEM successfully"
+              else
+                echo "ERROR: CERTIFICATE_PRIVATE_KEY is not a usable RSA private key." >&2
+                echo "  It starts with: $(head -1 "$CERT_KEY")" >&2
+                echo "  Expected -----BEGIN RSA PRIVATE KEY----- or -----BEGIN PRIVATE KEY-----." >&2
+                echo "  If it says OPENSSH, regenerate with: openssl genrsa 2048" >&2
+                echo "  If it says PUBLIC KEY or begins ssh-rsa, you pasted the .pub half." >&2
+                exit 1
+              fi
+            fi
+            chmod 600 "$CERT_KEY"
           else
             openssl genrsa -out "$CERT_KEY" 2048 2>/dev/null
             chmod 600 "$CERT_KEY"
