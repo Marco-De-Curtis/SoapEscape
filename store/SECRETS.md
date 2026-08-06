@@ -53,22 +53,42 @@ Set these five in whichever CI you use. Names are what the build scripts expect.
 |---|---|---|
 | `APPLE_TEAM_ID` | 10 characters, uppercase | developer.apple.com > Membership details |
 | `IOS_BUNDLE_ID` | e.g. `com.example.soapescape` | The identifier you registered |
-| `APP_STORE_CONNECT_KEY_ID` | 10 characters | Shown next to the key you created |
+| `APP_STORE_CONNECT_KEY_IDENTIFIER` | 10 characters | Shown next to the key you created. Note the name: Codemagic's CLI reads `KEY_IDENTIFIER`, not `KEY_ID` |
 | `APP_STORE_CONNECT_ISSUER_ID` | a UUID | Top of the Integrations > App Store Connect API page |
 | `APP_STORE_CONNECT_PRIVATE_KEY` | full contents of the `.p8` | The file you downloaded once |
 
 For `APP_STORE_CONNECT_PRIVATE_KEY`, paste the whole file including the
 `-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----` lines.
 
+### Why no Codemagic "integration"
+
+Codemagic can store the `.p8` as a named integration and have the workflow
+reference it with `auth: integration`. That path is **team-only**: the
+Teams > Integrations menu does not exist on a personal account, and a config
+using it fails validation with
+
+```
+auth -> "integration" requires workflow -> integrations -> app_store_connect
+```
+
+So `codemagic.yaml` passes the three API key values as environment variables
+instead. Same outcome, no team required. `app-store-connect fetch-signing-files`
+reads them from the environment and creates the distribution certificate and
+provisioning profile on the fly, which also removes any need to manage those
+by hand.
+
 ### Adding them in Codemagic
 
-Codemagic UI > your app > Settings > Environment variables. Create a group
-called `appstore`, add each variable, and tick **Secure** on every one. Secure
-variables are write-only afterwards and are masked in build logs.
+App settings > **Environment variables**. For each row: type the name, paste
+the value, type `appstore` as the group, leave **Secret** ticked, click Add.
+Secret variables are write-only afterwards and masked in build logs.
 
-Codemagic can also manage the API key natively under Teams > Integrations >
-Apple Developer Portal, which is simpler than passing the three App Store
-Connect values by hand. Either approach works.
+The group name must be exactly `appstore`, since that is what the workflow
+imports.
+
+`APP_STORE_CONNECT_PRIVATE_KEY` is multi-line. Paste the entire `.p8`
+contents, including the `-----BEGIN PRIVATE KEY-----` and
+`-----END PRIVATE KEY-----` lines. The value box accepts newlines.
 
 ### Adding them as GitHub Actions secrets
 
