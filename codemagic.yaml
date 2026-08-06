@@ -6,13 +6,18 @@
 #
 # SETUP, once:
 #   1. codemagic.io -> add this repository
-#   2. Teams > Integrations > Apple Developer Portal: upload the App Store
-#      Connect .p8 key, plus its Key ID and Issuer ID. Codemagic stores it and
-#      handles signing, so the key never goes in a variable or in this file.
-#   3. App settings > Environment variables > group "appstore":
-#        APPLE_TEAM_ID   = your 10-character Team ID       [mark Secure]
-#        IOS_BUNDLE_ID   = com.marcodecurtis.soapescape    [mark Secure]
-#   4. Start your first build.
+#   2. App settings > Environment variables, all in group "appstore", all
+#      marked Secret:
+#        APPLE_TEAM_ID                   your 10-character Team ID
+#        IOS_BUNDLE_ID                   com.marcodecurtis.soapescape
+#        APP_STORE_CONNECT_ISSUER_ID     the UUID from App Store Connect
+#        APP_STORE_CONNECT_KEY_IDENTIFIER the 10-character Key ID
+#        APP_STORE_CONNECT_PRIVATE_KEY   the whole .p8 file contents,
+#                                        including the BEGIN/END lines
+#   3. Start your first build.
+#
+# Deliberately no Codemagic "integration" is used: those live under Teams and
+# do not exist on a personal account.
 #
 # See store/SECRETS.md for what is secret and what is not.
 #
@@ -25,18 +30,6 @@ workflows:
     name: Soapy Escape - iOS TestFlight
     instance_type: mac_mini_m2
     max_build_duration: 60
-
-    # Names the App Store Connect integration holding the .p8 key. Both the
-    # automatic signing below and `auth: integration` in publishing resolve
-    # through this; without it Codemagic rejects the file with
-    # "auth -> integration requires workflow -> integrations -> app_store_connect".
-    #
-    # The value must match the integration name EXACTLY, as shown under
-    # Teams > Integrations > Apple Developer Portal in Codemagic. It is a
-    # literal string and cannot be an environment variable, so if you named
-    # yours something else, change it here.
-    integrations:
-      app_store_connect: Soapy Escape API Key
 
     environment:
       groups:
@@ -52,9 +45,11 @@ workflows:
       # since 28 April 2026. "latest" satisfies that; pin it only if a future
       # Xcode breaks the build.
       xcode: latest
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: $IOS_BUNDLE_ID
+      # No `ios_signing:` block and no `integrations:` block on purpose.
+      # Both route through a named App Store Connect integration, which only
+      # exists on Codemagic team accounts. On a personal account the signing
+      # files are fetched explicitly below using the API key variables, which
+      # works the same and needs no team.
 
     triggering:
       events:
@@ -127,12 +122,19 @@ workflows:
             --export-release "$EXPORT_PRESET" "$XCODE_PROJECT"
           ls -la build/ios
 
-      - name: Build and sign the IPA
+      - name: Fetch signing files and build the IPA
         script: |
           set -euo pipefail
-          # Codemagic wrote the provisioning profile and certificate into the
-          # keychain from the Apple Developer Portal integration; this applies
-          # them to the project Godot just generated.
+          # app-store-connect picks up APP_STORE_CONNECT_ISSUER_ID,
+          # APP_STORE_CONNECT_KEY_IDENTIFIER and APP_STORE_CONNECT_PRIVATE_KEY
+          # from the environment, so no arguments carry the credentials and
+          # nothing lands in the log.
+          keychain initialize
+          app-store-connect fetch-signing-files "$IOS_BUNDLE_ID" \
+            --type IOS_APP_STORE --create
+          keychain add-certificates
+
+          # Apply the profile to the project Godot just generated.
           xcode-project use-profiles --project "$XCODE_PROJECT"
 
           # Godot derives the scheme name itself and it does not always match
@@ -153,7 +155,9 @@ workflows:
 
     publishing:
       app_store_connect:
-        auth: integration
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
         # Left off deliberately. Get a build onto your own phone and play all
         # ten levels before anything reaches a reviewer.
