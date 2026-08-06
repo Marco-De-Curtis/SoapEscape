@@ -15,6 +15,11 @@
 #        APP_STORE_CONNECT_PRIVATE_KEY   the whole .p8 file contents. The
 #                                        newlines do not matter: the key is
 #                                        re-wrapped into valid PEM below.
+#      Optional but recommended:
+#        CERTIFICATE_PRIVATE_KEY         output of `openssl genrsa 2048`. If
+#                                        absent, a throwaway key is generated
+#                                        and a new distribution certificate is
+#                                        created every build, which Apple caps.
 #   3. Start your first build.
 #
 # Deliberately no Codemagic "integration" is used: those live under Teams and
@@ -103,32 +108,62 @@ workflows:
           # the guard.
           "$GODOT" --headless --path . --import || true
 
-      - name: Prepare the App Store Connect key
+      - name: Prepare the signing keys
         script: |
           set -euo pipefail
-          # Codemagic's variable box does not reliably preserve the newlines in
-          # a pasted .p8, and the CLI then rejects it with "Provided value is
-          # not a valid PEM encoded private key". Rebuild a correct PEM from
-          # whatever we were handed: strip the armour and all whitespace, then
-          # re-wrap the base64 body at 64 characters. This works whether the
-          # value arrived intact, flattened to one line, or with stray spaces.
-          KEYFILE="$HOME/asc_key.p8"
-          python3 - "$KEYFILE" <<'PYEOF'
+          # Two entirely different keys are involved here and confusing them
+          # wastes a lot of time:
+          #
+          #   APP_STORE_CONNECT_PRIVATE_KEY  the .p8 API key. Authenticates to
+          #                                  Apple's API. Downloaded once from
+          #                                  App Store Connect.
+          #   CERTIFICATE_PRIVATE_KEY        the key whose CSR the distribution
+          #                                  certificate is issued against. It
+          #                                  is what actually signs the binary.
+          #
+          # A certificate is useless without its private key, which is what
+          # "Cannot save Signing Certificates without certificate private key"
+          # means: Apple had certificates for this account, but not the key.
+
+          # Codemagic's variable box does not reliably preserve newlines in a
+          # pasted key, and the CLI rejects a flattened one as "not a valid PEM
+          # encoded private key". Rebuild valid PEM from whatever we are given:
+          # strip the armour and all whitespace, re-wrap the base64 at 64.
+          normalise_pem() {   # $1 = env var name, $2 = out path, $3 = PEM label
+            python3 - "$1" "$2" "$3" <<'PYEOF'
           import os, re, sys
-          raw = os.environ["APP_STORE_CONNECT_PRIVATE_KEY"].strip()
-          body = re.sub(r"-----(BEGIN|END) PRIVATE KEY-----", "", raw)
+          var, out, label = sys.argv[1], sys.argv[2], sys.argv[3]
+          raw = os.environ.get(var, "").strip()
+          if not raw:
+              sys.exit("%s is empty" % var)
+          body = re.sub(r"-----(BEGIN|END)[A-Z ]*PRIVATE KEY-----", "", raw)
           body = re.sub(r"\s+", "", body)
-          if not body:
-              sys.exit("APP_STORE_CONNECT_PRIVATE_KEY is empty")
           lines = [body[i:i + 64] for i in range(0, len(body), 64)]
-          pem = "-----BEGIN PRIVATE KEY-----\n" + "\n".join(lines) + "\n-----END PRIVATE KEY-----\n"
-          with open(sys.argv[1], "w") as f:
+          pem = "-----BEGIN %s-----\n%s\n-----END %s-----\n" % (label, "\n".join(lines), label)
+          with open(out, "w") as f:
               f.write(pem)
-          os.chmod(sys.argv[1], 0o600)
-          # Length only, never the contents.
-          print("rebuilt PEM: %d base64 chars over %d lines" % (len(body), len(lines)))
+          os.chmod(out, 0o600)
+          print("  %s: rebuilt %d base64 chars over %d lines" % (var, len(body), len(lines)))
           PYEOF
-          echo "ASC_KEY=$KEYFILE" >> "$CM_ENV"
+          }
+
+          ASC_KEY="$HOME/asc_key.p8"
+          normalise_pem APP_STORE_CONNECT_PRIVATE_KEY "$ASC_KEY" "PRIVATE KEY"
+          echo "ASC_KEY=$ASC_KEY" >> "$CM_ENV"
+
+          CERT_KEY="$HOME/cert_key.pem"
+          if [ -n "${CERTIFICATE_PRIVATE_KEY:-}" ]; then
+            normalise_pem CERTIFICATE_PRIVATE_KEY "$CERT_KEY" "RSA PRIVATE KEY"
+            echo "  using the stored certificate key"
+          else
+            openssl genrsa -out "$CERT_KEY" 2048 2>/dev/null
+            chmod 600 "$CERT_KEY"
+            echo "  no CERTIFICATE_PRIVATE_KEY set, generated a throwaway one."
+            echo "  Apple caps distribution certificates per account, and a new"
+            echo "  key means a new certificate every build. Store one as"
+            echo "  CERTIFICATE_PRIVATE_KEY to keep reusing the same one."
+          fi
+          echo "CERT_KEY=$CERT_KEY" >> "$CM_ENV"
 
       - name: Set the build number
         script: |
@@ -164,7 +199,8 @@ workflows:
             --type IOS_APP_STORE --create \
             --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
             --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key "@file:$ASC_KEY"
+            --private-key "@file:$ASC_KEY" \
+            --certificate-key "@file:$CERT_KEY"
           keychain add-certificates
 
           # Apply the profile to the project Godot just generated.

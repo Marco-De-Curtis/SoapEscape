@@ -56,6 +56,37 @@ Set these five in whichever CI you use. Names are what the build scripts expect.
 | `APP_STORE_CONNECT_KEY_IDENTIFIER` | 10 characters | Shown next to the key you created. Note the name: Codemagic's CLI reads `KEY_IDENTIFIER`, not `KEY_ID` |
 | `APP_STORE_CONNECT_ISSUER_ID` | a UUID | Top of the Integrations > App Store Connect API page |
 | `APP_STORE_CONNECT_PRIVATE_KEY` | full contents of the `.p8` | The file you downloaded once |
+| `CERTIFICATE_PRIVATE_KEY` | output of `openssl genrsa 2048` | You generate it. Optional but recommended, see below |
+
+### Two different private keys
+
+These get confused constantly, and the error messages do not help:
+
+| | What it is | Where it comes from |
+|---|---|---|
+| `APP_STORE_CONNECT_PRIVATE_KEY` | The `.p8` API key. Authenticates the build to Apple's API | Downloaded once from App Store Connect |
+| `CERTIFICATE_PRIVATE_KEY` | The key whose CSR the distribution certificate is issued against. This is what actually signs the binary | You generate it, or the build makes a throwaway one |
+
+A certificate is worthless without its private key. That is what
+`Cannot save Signing Certificates without certificate private key` means: Apple
+had certificates for the account, but the build had no key to pair with them.
+
+If `CERTIFICATE_PRIVATE_KEY` is not set the build generates a throwaway key,
+which forces a **new distribution certificate on every run**. Apple caps how
+many an account may hold, so that will eventually fail. Generate one and store
+it:
+
+```
+openssl genrsa 2048
+```
+
+On Windows, Git Bash ships with openssl. Copy the entire output, including the
+BEGIN and END lines, into a Secret variable named `CERTIFICATE_PRIVATE_KEY` in
+the `appstore` group. The build then reuses the same certificate every time.
+
+Newline handling does not matter for either key. The workflow strips the
+armour and re-wraps the base64 itself, because Codemagic's variable box does
+not reliably preserve line breaks.
 
 For `APP_STORE_CONNECT_PRIVATE_KEY`, paste the whole file including the
 `-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----` lines.
