@@ -118,6 +118,14 @@ workflows:
         script: |
           set -euo pipefail
           mkdir -p build/ios
+          # This must produce ONLY the Xcode project, not a built/archived app.
+          # The preset sets application/export_project_only=true for exactly this
+          # reason: signing and archiving happen in the next step via
+          # xcode-project use-profiles / build-ipa, which apply the real App Store
+          # provisioning profiles. If the preset instead lets Godot run xcodebuild
+          # here, the archive fails with "conflicting provisioning settings"
+          # (automatic development signing vs. a manual Apple Distribution
+          # identity), because no App Store profile has been fetched yet.
           "$GODOT" --headless --path . \
             --export-release "$EXPORT_PRESET" "$XCODE_PROJECT"
           ls -la build/ios
