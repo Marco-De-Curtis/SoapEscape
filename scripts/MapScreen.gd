@@ -73,7 +73,7 @@ func _build_top_bar() -> void:
 	add_child(bar)
 
 	var title := Label.new()
-	title.text = "Soap Escape"
+	title.text = "Soapy Escape"
 	title.add_theme_font_override("font", Fonts.fredoka())
 	title.add_theme_font_size_override("font_size", 24)
 	title.add_theme_color_override("font_color", C_PINK)

@@ -1,8 +1,11 @@
 # App Store submission kit — Soapy Escape
 
-The App Store listing is **Soapy Escape**; "Soap Escape" was already taken.
-Everywhere else, on the home screen, in the logo, in the bundle ID and in this
-repo, the game is still Soap Escape. That difference is intentional.
+The App Store listing name is **Soapy Escape** — "Soap Escape" was already
+taken when the app record was created. The name has since been made
+consistent everywhere else too: home screen, logo, LICENSE, this repo. Only
+the bundle identifier still reads `soapescape`, because that value is
+permanent once an app record exists and changing it means a new App ID, a
+new provisioning profile and a new App Store Connect listing from scratch.
 
 Everything needed for the App Store Connect listing lives in this folder. None of
 it is packaged into the game: the iOS export preset's `exclude_filter` drops

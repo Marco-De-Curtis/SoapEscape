@@ -1,4 +1,4 @@
-# Shipping Soap Escape to iOS without owning a Mac
+# Shipping Soapy Escape to iOS without owning a Mac
 
 ## The short answer
 

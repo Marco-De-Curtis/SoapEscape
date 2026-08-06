@@ -1,6 +1,6 @@
 # Third-party notices
 
-Soap Escape bundles the third-party assets listed below. Every item here is
+Soapy Escape bundles the third-party assets listed below. Every item here is
 either public domain (CC0) or licensed under a permissive licence that allows
 inclusion in a commercial application.
 

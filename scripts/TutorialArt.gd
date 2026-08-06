@@ -62,7 +62,7 @@ func _draw_logo(w: float) -> void:
 	for b: Array in [[Vector2(-104, 50), 6.0], [Vector2(-66, 64), 4.0], [Vector2(80, 56), 5.0]]:
 		draw_arc(c + (b[0] as Vector2), b[1] as float, 0.0, TAU, 16,
 			Color(1, 1, 1, 0.6), 1.8, true)
-	_arch(c + Vector2(0, -34), 330.0, "Soap Escape", 34)
+	_arch(c + Vector2(0, -34), 330.0, "Soapy Escape", 34)
 	SoapArt.paint(self, c + Vector2(0, 30), 1.7, SoapArt.CALM)
 
 	# floating bubbles fill the field so slide 1 has the same visual weight as

@@ -14,7 +14,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="Soap Escape"
+config/name="Soapy Escape"
 run/main_scene="res://scenes/Main.tscn"
 config/icon="res://SoapEscape_AppIcon_1024.png"
 config/features=PackedStringArray("4.7", "Mobile")

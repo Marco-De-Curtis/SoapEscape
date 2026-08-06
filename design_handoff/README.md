@@ -1,7 +1,7 @@
-# Handoff: Soap Escape — iOS Game UI
+# Handoff: Soapy Escape — iOS Game UI
 
 ## Overview
-Soap Escape is a kawaii iOS mobile game. A soap bar with a face slides down a bathroom drain channel across 10 levels. The player steers it left and right by tilting. Wet zones shrink the soap. The goal is to reach the finish line with enough soap remaining.
+Soapy Escape is a kawaii iOS mobile game. A soap bar with a face slides down a bathroom drain channel across 10 levels. The player steers it left and right by tilting. Wet zones shrink the soap. The goal is to reach the finish line with enough soap remaining.
 
 ## About the Design Files
 The `.dc.html` files in this bundle are **high-fidelity design references built in HTML** — they show the intended look, layout, animations, and interactions. They are prototypes, not production code. Your task is to **recreate these designs in the target codebase** (Godot, React Native, SwiftUI, or whatever stack is chosen) using its established patterns and libraries. Do not ship the HTML directly.
@@ -54,7 +54,7 @@ Two fonts only — both available on Google Fonts.
 Typographic specs:
 | Element | Font | Size | Weight | Color |
 |---|---|---|---|---|
-| App title "Soap Escape" | Fredoka One | 52px | 400 | `#d63384` + `#7c3aed` for "!" |
+| App title "Soapy Escape" | Fredoka One | 52px | 400 | `#d63384` + `#7c3aed` for "!" |
 | Level name on map | Nunito | 9px | 600 | `#7c3aed` |
 | Level number in node | system sans | 15px | 700 | `#ffffff` |
 | In-game level name | Nunito | 13px | 700 | `#d63384` |
@@ -107,7 +107,7 @@ text-shadow: 2px 3px 0 rgba(91,33,182,0.45);
 **Layout (390×844):**
 - Background: `radial-gradient(ellipse at 50% 35%, #fdf2f8 0%, #fce7f3 100%)`
 - Dynamic Island overlay (always present)
-- Title area (y: 82–160): "Soap Escape" Fredoka One 52px centered, tagline below
+- Title area (y: 82–160): "Soapy Escape" Fredoka One 52px centered, tagline below
 - Soap character (y: ~295): 240×133px, floating animation, centered
 - Floating background bubbles: 5–6 small circles, pink/lavender, rising animation
 - Sparkle decorations: 3 ✦ glyphs at various positions, twinkle animation
@@ -157,7 +157,7 @@ text-shadow: 2px 3px 0 rgba(91,33,182,0.45);
 
 **Layout:**
 - Background: `#fdf2f8` + tile grid overlay (`background-image` grid, `rgba(249,168,212,0.1)`, 22×22px)
-- Top bar (y: 58px): white 88% opacity, pink bottom border `#f9a8d4`, "Soap Escape" Fredoka One 22px left, status right
+- Top bar (y: 58px): white 88% opacity, pink bottom border `#f9a8d4`, "Soapy Escape" Fredoka One 22px left, status right
 - Winding pink dashed path connecting all 10 nodes (stroke `#f9a8d4`, width 5px, dasharray 13,9)
 
 **Level node states (44px outer diameter):**
@@ -357,7 +357,7 @@ Two treatments are designed (see Phase 1, option 1b). **Preferred: B — Sticker
 - Tilt: `transform: rotate(-2deg)`
 - Soap mascot (80×44px) with black outline (see soap spec above), centered top, floating animation
 - Horizontal rule: `1.5px solid #1a1a2e`
-- "Soap Escape" Fredoka One 42px: "Soap" `#d63384`, "Escape" `#7c3aed`, text-stroke 1.5px white, dark shadow
+- "Soapy Escape" Fredoka One 42px: "Soapy" `#d63384`, "Escape" `#7c3aed`, text-stroke 1.5px white, dark shadow
 - Subtitle rule row: "SLIDE · DODGE · SURVIVE" Nunito 8px 700 `#9ca3af` letter-spacing 0.18em, flanked by lines
 - Red hanko dot (bottom-right, partially overlapping border): 22px circle `#e11d48` with "No.1" text
 

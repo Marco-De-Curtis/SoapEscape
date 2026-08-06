@@ -1,4 +1,4 @@
-# Screenshots — Soap Escape
+# Screenshots — Soapy Escape
 
 ## Specification
 
