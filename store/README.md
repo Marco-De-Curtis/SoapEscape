@@ -16,6 +16,8 @@ it is packaged into the game: the iOS export preset's `exclude_filter` drops
 | `BUILD_WITHOUT_A_MAC.md` | How to build and ship iOS without owning a Mac |
 | `SECRETS.md` | What is secret, and where each signing value goes |
 
+The build pipeline itself is `codemagic.yaml` at the repo root.
+
 The two required web pages are not in this folder. They live in `docs/` at the
 repo root, because that is the directory GitHub Pages serves from:
 

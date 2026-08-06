@@ -1,0 +1,155 @@
+# Codemagic CI: Godot -> Xcode -> TestFlight, with no Mac of your own.
+#
+# Godot's iOS export does not produce an app. It produces an Xcode project that
+# still has to be compiled and signed on macOS, which is what this runs on a
+# hosted Mac.
+#
+# SETUP, once:
+#   1. codemagic.io -> add this repository
+#   2. Teams > Integrations > Apple Developer Portal: upload the App Store
+#      Connect .p8 key, plus its Key ID and Issuer ID. Codemagic stores it and
+#      handles signing, so the key never goes in a variable or in this file.
+#   3. App settings > Environment variables > group "appstore":
+#        APPLE_TEAM_ID   = your 10-character Team ID       [mark Secure]
+#        IOS_BUNDLE_ID   = com.marcodecurtis.soapescape    [mark Secure]
+#   4. Start your first build.
+#
+# See store/SECRETS.md for what is secret and what is not.
+#
+# NOTE: this config has not been run. iOS signing pipelines essentially never
+# work on the first attempt, so expect two or three rounds of failures. The
+# likely culprits are called out in comments below.
+
+workflows:
+  ios-testflight:
+    name: Soapy Escape - iOS TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+
+    environment:
+      groups:
+        - appstore          # APPLE_TEAM_ID, IOS_BUNDLE_ID
+      vars:
+        # Must match the version in project.godot's config/features.
+        # Verify this tag exists at github.com/godotengine/godot/releases
+        # before the first build; a wrong tag fails at the download step.
+        GODOT_VERSION: "4.7-stable"
+        EXPORT_PRESET: "iOS"
+        XCODE_PROJECT: "build/ios/SoapEscape.xcodeproj"
+      # Apple has required Xcode 26 / iOS 26 SDK for all App Store uploads
+      # since 28 April 2026. "latest" satisfies that; pin it only if a future
+      # Xcode breaks the build.
+      xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: $IOS_BUNDLE_ID
+
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: "v*"
+          include: true
+      # Deliberately tag-triggered rather than on every push to main: TestFlight
+      # build numbers are a finite, ever-increasing resource and you do not want
+      # a build burned on every commit. Ship with: git tag v1.0.0 && git push --tags
+
+    scripts:
+      - name: Install Godot and its export templates
+        script: |
+          set -euo pipefail
+          BASE="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}"
+
+          curl -fL -o godot.zip \
+            "${BASE}/Godot_v${GODOT_VERSION}_macos.universal.zip"
+          unzip -q godot.zip
+          GODOT_APP=$(find . -maxdepth 2 -name "Godot*.app" -print -quit)
+          GODOT="${GODOT_APP}/Contents/MacOS/Godot"
+          chmod +x "$GODOT"
+          echo "GODOT=$GODOT" >> "$CM_ENV"
+
+          # Export templates are a separate download and are not optional:
+          # without them the export step fails with "no export template found".
+          curl -fL -o templates.tpz \
+            "${BASE}/Godot_v${GODOT_VERSION}_export_templates.tpz"
+          unzip -q templates.tpz
+          # The .tpz unzips to a folder called "templates"; Godot expects it at
+          # a version-named path under Application Support.
+          TEMPLATE_DIR="$HOME/Library/Application Support/Godot/export_templates/${GODOT_VERSION/-/.}"
+          mkdir -p "$TEMPLATE_DIR"
+          mv templates/* "$TEMPLATE_DIR/"
+          "$GODOT" --version
+
+      - name: Inject signing identifiers into the export preset
+        script: |
+          set -euo pipefail
+          # export_presets.cfg is committed with these fields blank because this
+          # repository is public. See store/SECRETS.md.
+          python3 tools/configure_ios_build.py
+
+      - name: Import assets
+        script: |
+          set -euo pipefail
+          # .godot/ is gitignored, so a fresh checkout has no import cache and
+          # the export would ship a project with no textures or fonts. This
+          # step regenerates it. It exits non-zero on harmless warnings, hence
+          # the guard.
+          "$GODOT" --headless --path . --import || true
+
+      - name: Set the build number
+        script: |
+          set -euo pipefail
+          # TestFlight rejects a build whose number it has seen before, so take
+          # the highest already uploaded and add one.
+          BUILD_NUMBER=$(app-store-connect get-latest-testflight-build-number \
+            --bundle-id "$IOS_BUNDLE_ID" 2>/dev/null || echo "0")
+          NEXT=$((BUILD_NUMBER + 1))
+          echo "Using build number $NEXT"
+          sed -i '' "s|^application/version=.*|application/version=\"$NEXT\"|" export_presets.cfg
+
+      - name: Export the Xcode project from Godot
+        script: |
+          set -euo pipefail
+          mkdir -p build/ios
+          "$GODOT" --headless --path . \
+            --export-release "$EXPORT_PRESET" "$XCODE_PROJECT"
+          ls -la build/ios
+
+      - name: Build and sign the IPA
+        script: |
+          set -euo pipefail
+          # Codemagic wrote the provisioning profile and certificate into the
+          # keychain from the Apple Developer Portal integration; this applies
+          # them to the project Godot just generated.
+          xcode-project use-profiles --project "$XCODE_PROJECT"
+
+          # Godot derives the scheme name itself and it does not always match
+          # the .xcodeproj filename, so ask the project rather than guess.
+          # A hardcoded name here is the single most likely cause of a
+          # "scheme not found" failure.
+          SCHEME=$(xcodebuild -project "$XCODE_PROJECT" -list -json \
+            | python3 -c "import json,sys; print(json.load(sys.stdin)['project']['schemes'][0])")
+          echo "Detected scheme: $SCHEME"
+
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT" \
+            --scheme "$SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log      # the only useful thing when signing fails
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        # Left off deliberately. Get a build onto your own phone and play all
+        # ten levels before anything reaches a reviewer.
+        submit_to_app_store: false
+
+      email:
+        recipients:
+          - soapyescape.support@gmail.com
+        notify:
+          success: true
+          failure: true
