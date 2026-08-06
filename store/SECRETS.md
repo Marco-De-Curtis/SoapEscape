@@ -76,13 +76,30 @@ which forces a **new distribution certificate on every run**. Apple caps how
 many an account may hold, so that will eventually fail. Generate one and store
 it:
 
-```
-openssl genrsa 2048
-```
+**On Windows, pick whichever works:**
 
-On Windows, Git Bash ships with openssl. Copy the entire output, including the
-BEGIN and END lines, into a Secret variable named `CERTIFICATE_PRIVATE_KEY` in
-the `appstore` group. The build then reuses the same certificate every time.
+1. **Git Bash** (installed with Git for Windows). Right-click any folder,
+   "Open Git Bash here", then:
+   ```
+   openssl genrsa 2048
+   ```
+   The key is printed to the window. Select it all and copy.
+
+2. **PowerShell**, no install needed. Windows 10 and 11 ship OpenSSH:
+   ```
+   ssh-keygen -t rsa -b 2048 -m PEM -f certkey.pem -N '""'
+   notepad certkey.pem
+   ```
+   Copy everything in the file that opens. Delete `certkey.pem` and
+   `certkey.pem.pub` afterwards.
+
+Either format works. `openssl genrsa` gives PKCS#8 on OpenSSL 3.x and PKCS#1 on
+1.x, `ssh-keygen -m PEM` gives PKCS#1, and the workflow preserves whichever
+label it receives rather than forcing one.
+
+Copy the entire output, including the BEGIN and END lines, into a Secret
+variable named `CERTIFICATE_PRIVATE_KEY` in the `appstore` group. The build
+then reuses the same certificate every time.
 
 Newline handling does not matter for either key. The workflow strips the
 armour and re-wraps the base64 itself, because Codemagic's variable box does
