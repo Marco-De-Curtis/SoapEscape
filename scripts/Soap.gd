@@ -58,6 +58,16 @@ const STEER_DRAG_RADIUS: float = 45.0
 # tiny contradictory drag.
 const STEER_DEADZONE: float = 8.0
 
+# Ceiling on 1:1 finger tracking, so a violent flick or a stray event can't
+# fling the soap across the lane in a single tick. Well above any real thumb
+# speed — it is a safety rail, not a feel knob. The lane is only 250 units
+# wide, so this still allows crossing it in about a sixth of a second.
+const DRAG_MAX_SPEED: float = 1600.0
+
+# Tracked speed that counts as a full lean for the squash/speed-line art
+# only. Purely cosmetic; changing it cannot affect how the soap moves.
+const DRAG_VISUAL_FULL: float = 320.0
+
 const OUTLINE_COLOR := SoapArt.OUTLINE_COLOR
 
 var size:           float = 1.0
@@ -78,6 +88,8 @@ var _wet_t:             float = 0.0
 var _steer_touch_index: int   = -1  # -1 = no active steering touch
 var _steer_anchor_x:    float = 0.0 # where that touch first landed
 var _steer_tap_bias:    float = 0.0 # instant lean from which half it was on
+var _drag_dx:           float = 0.0 # finger travel since the last physics tick
+var _dragging:          bool  = false # this touch has moved, so track it 1:1
 
 signal died(reason: String)
 signal size_changed(new_size: float)
@@ -196,25 +208,27 @@ func _input(event: InputEvent) -> void:
 			# only the touch that started steering can change it.
 		elif e.index == _steer_touch_index:
 			_steer_touch_index = -1
+			_dragging      = false
+			_drag_dx       = 0.0
 			lean_direction = 0.0
 	elif event is InputEventScreenDrag:
 		var e := event as InputEventScreenDrag
 		if e.index == _steer_touch_index:
-			var offset := e.position.x - _steer_anchor_x
-			var drag   := clampf(offset / STEER_DRAG_RADIUS, -1.0, 1.0)
-			if absf(offset) < STEER_DEADZONE:
-				# Not really a swipe — a held thumb. Keep the press's lean.
-				lean_direction = _steer_tap_bias
-			elif drag * _steer_tap_bias > 0.0:
-				# Swiping further into the side already pressed. Reinforce,
-				# so nudging left while holding left never reads as easing off.
-				lean_direction = clampf(drag + _steer_tap_bias, -1.0, 1.0)
-			else:
-				# Swiping back across, or toward the other side: the swipe
-				# ALONE decides. The press bias is deliberately not added
-				# here — letting it fight the drag is what made a rightward
-				# swipe from the left half need half a screen of travel.
-				lean_direction = drag
+			# Direct 1:1 tracking. e.relative.x is how far the finger moved
+			# since the last event, in viewport units, and camera zoom here is
+			# 1, so feeding it straight through means the soap moves exactly
+			# as far and exactly as fast as the thumb — a flick moves it fast,
+			# a slow drag moves it slowly, and it starts on the same frame the
+			# finger does.
+			#
+			# What this replaces only ever read the DIRECTION of a swipe and
+			# then accelerated toward a fixed top speed of 252 units/s. Since
+			# the lane is 250 units wide, crossing it took a full second no
+			# matter how hard you swiped, and swipe speed was discarded
+			# entirely. No amount of retuning inside that model could make a
+			# fast swipe feel fast, because nothing ever measured swipe speed.
+			_drag_dx += e.relative.x
+			_dragging = true
 
 # ── Physics ────────────────────────────────────────────────────────────────
 
@@ -226,7 +240,12 @@ func _physics_process(delta: float) -> void:
 		elif Input.is_action_pressed("lean_right"): lean_direction = 1.0
 		else:                                        lean_direction = 0.0
 
-	_apply_lateral_physics(delta)
+	if _dragging:
+		_apply_drag_tracking(delta)
+	else:
+		# Tap-and-hold (no finger movement) and the desktop keys keep the
+		# original lean model, so the tutorial's "hold a side" still works.
+		_apply_lateral_physics(delta)
 	velocity.y = forward_speed
 	move_and_slide()
 
@@ -252,6 +271,24 @@ func _physics_process(delta: float) -> void:
 	_update_collision_shape()
 	_update_visuals()
 	_update_speed_lines()
+
+func _apply_drag_tracking(delta: float) -> void:
+	# Convert the finger travel banked since the last tick into exactly the
+	# velocity needed to cover that distance this tick, so the soap lands
+	# where the thumb is rather than chasing it. Going through velocity +
+	# move_and_slide rather than assigning position keeps wall and obstacle
+	# collisions working.
+	var v := 0.0
+	if delta > 0.0:
+		v = clampf(_drag_dx / delta, -DRAG_MAX_SPEED, DRAG_MAX_SPEED)
+	_drag_dx = 0.0
+	velocity.x = v
+
+	# Squash/speed-line visuals follow the tracked motion. DRAG_VISUAL_FULL is
+	# the speed treated as "leaning hard" for art purposes only; it has no
+	# effect on movement.
+	lean_direction = clampf(v / DRAG_VISUAL_FULL, -1.0, 1.0)
+	lean_magnitude = absf(lean_direction)
 
 func _apply_lateral_physics(delta: float) -> void:
 	# Cosmetic only, feeds _update_squash / _update_speed_lines — see the
