@@ -40,15 +40,23 @@ const LEAN_VISUAL_BUILD_MIN:   float = 0.028
 const LEAN_VISUAL_BUILD_RANGE: float = 0.042
 const LEAN_VISUAL_EASE:        float = 0.10
 
-# Distance in points a finger has to drag, from wherever it first touched
-# down, to swing steering from where a tap left it to fully the other way.
-# Deliberately relative to the touch's OWN start point, not the screen's
-# centre: a rightward swipe must always ease toward/into a rightward lean,
-# even if the whole swipe happens on the left half of the screen and never
-# crosses the middle. This is the number to retune first if steering feels
-# too twitchy (lower it) or too heavy (raise it) once tested on a real
-# device.
-const STEER_DRAG_RADIUS: float = 90.0
+# Drag distance, in viewport units on a 390-wide viewport, for a swipe alone
+# to reach full lean. A swipe AWAY from the side you pressed is judged purely
+# on this distance, so ~45 units (about 12% of screen width, an ordinary thumb
+# flick) turns the soap fully — no matter which half of the screen the whole
+# gesture happens on.
+#
+# This was 90 AND the press bias was added on top of the drag, which meant a
+# press on the left half pinned lean to -1 and a rightward swipe had to spend
+# 90 units just clawing back to neutral, then 90 more to reach full right:
+# ~180 units, nearly half the screen, to reverse. Reported, accurately, as
+# "I need to push crazy to move it".
+const STEER_DRAG_RADIUS: float = 45.0
+
+# Movement under this is treated as a hold, not a swipe, so tapping and
+# holding a side still leans that way without a steady thumb counting as a
+# tiny contradictory drag.
+const STEER_DEADZONE: float = 8.0
 
 const OUTLINE_COLOR := SoapArt.OUTLINE_COLOR
 
@@ -193,7 +201,20 @@ func _input(event: InputEvent) -> void:
 		var e := event as InputEventScreenDrag
 		if e.index == _steer_touch_index:
 			var offset := e.position.x - _steer_anchor_x
-			lean_direction = clampf(_steer_tap_bias + offset / STEER_DRAG_RADIUS, -1.0, 1.0)
+			var drag   := clampf(offset / STEER_DRAG_RADIUS, -1.0, 1.0)
+			if absf(offset) < STEER_DEADZONE:
+				# Not really a swipe — a held thumb. Keep the press's lean.
+				lean_direction = _steer_tap_bias
+			elif drag * _steer_tap_bias > 0.0:
+				# Swiping further into the side already pressed. Reinforce,
+				# so nudging left while holding left never reads as easing off.
+				lean_direction = clampf(drag + _steer_tap_bias, -1.0, 1.0)
+			else:
+				# Swiping back across, or toward the other side: the swipe
+				# ALONE decides. The press bias is deliberately not added
+				# here — letting it fight the drag is what made a rightward
+				# swipe from the left half need half a screen of travel.
+				lean_direction = drag
 
 # ── Physics ────────────────────────────────────────────────────────────────
 
