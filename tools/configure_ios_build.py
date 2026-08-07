@@ -48,6 +48,17 @@ REQUIRED = [
      "0 is iPhone in Godot's enum. 1 is iPad and 2 is both."),
 ]
 
+# Settings that must not be left at their empty default, because Godot's
+# fallback for "empty" is not "nothing" but its own bundled asset.
+# application/boot_splash/image ignores boot_splash/show_image entirely at
+# iOS export time: an empty path makes Godot bundle ITS OWN logo
+# (boot_splash_png, compiled into the engine) as the native Launch Screen
+# image, so the app opens on the Godot icon with no export-time warning.
+REQUIRED_NON_EMPTY = [
+    (PROJECT, "boot_splash/image",
+     "Empty falls back to Godot's own bundled logo as the iOS launch image."),
+]
+
 
 def verify_enums():
     """Fail the build on a silently-wrong enum rather than after the upload."""
@@ -62,6 +73,14 @@ def verify_enums():
             sys.exit("error: %s has %s=%s, expected %s.\n"
                      "       %s" % (path, key, got, want, why))
         print("verified %s=%s in %s" % (key, want, path))
+
+    for path, key, why in REQUIRED_NON_EMPTY:
+        with open(path) as f:
+            text = f.read()
+        m = re.search(r'^%s="([^"]*)"$' % re.escape(key), text, re.MULTILINE)
+        if not m or not m.group(1).strip():
+            sys.exit("error: %s has an empty %s.\n       %s" % (path, key, why))
+        print("verified %s is set in %s" % (key, path))
 
 
 def patch(text, key, value):

@@ -19,7 +19,6 @@ func _ready() -> void:
 	_build_background()
 	_build_dynamic_island()
 	_build_tagline()
-	_build_progress()
 	_build_buttons()
 	if not SaveData.is_onboarding_shown():
 		_show_onboarding_carousel()
@@ -71,40 +70,6 @@ func _build_tagline() -> void:
 	sub.offset_left  = 44.0; sub.offset_right = -44.0
 	sub.offset_top   = 402.0; sub.offset_bottom = 462.0
 	add_child(sub)
-
-func _build_progress() -> void:
-	# The gap between the tagline and the buttons was dead space; showing the
-	# player's own progress is more use than more decoration.
-	var stars := 0
-	for lv: Dictionary in LevelData.LEVELS:
-		stars += SaveData.get_stars(int(lv.get("id", 1)))
-	var total := LevelData.LEVELS.size() * 3
-
-	var pill := Panel.new()
-	var sty := StyleBoxFlat.new()
-	sty.bg_color = Color(1, 1, 1, 0.85)
-	sty.set_corner_radius_all(22)
-	sty.set_border_width_all(2)
-	sty.border_color = Color("#f9a8d4")
-	pill.add_theme_stylebox_override("panel", sty)
-	pill.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	pill.anchor_left  = 0.5; pill.anchor_right  = 0.5
-	pill.offset_left  = -104.0; pill.offset_right = 104.0
-	pill.offset_top   = 516.0;  pill.offset_bottom = 560.0
-	add_child(pill)
-
-	var lbl := Label.new()
-	# A brand new player has nothing to report, so "0 of 30" would just be a
-	# reminder of emptiness. Invite them instead, and switch to real progress
-	# once they have something to show.
-	lbl.text = "⭐  Collect all %d stars!" % total if stars == 0 else "⭐  %d of %d stars" % [stars, total]
-	lbl.add_theme_font_override("font", _nv(700))
-	lbl.add_theme_font_size_override("font_size", 15)
-	lbl.add_theme_color_override("font_color", C_PURPLE)
-	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl.vertical_alignment   = VERTICAL_ALIGNMENT_CENTER
-	lbl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	pill.add_child(lbl)
 
 # ── Buttons ────────────────────────────────────────────────────────────────
 
