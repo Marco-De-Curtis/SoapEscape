@@ -9,11 +9,22 @@ const LATERAL_SCALE: float = 60.0
 const EASE_RATE:     float = 0.060
 const SHRINK_RATE:   float = 0.012
 
+# Distance in points, from screen centre, at which steering reaches full
+# strength. Inside this band, lean is analog and tracks the finger live;
+# outside it (the outer edges, where a thumb naturally rests) it is pegged
+# at max, same as the old tap-a-half behaviour. This is the number to
+# retune first if steering feels too twitchy (lower it) or too heavy
+# (raise it) once tested on a real device.
+const STEER_FALLOFF: float = 90.0
+
 const OUTLINE_COLOR := SoapArt.OUTLINE_COLOR
 
 var size:           float = 1.0
 var lean_magnitude: float = 0.0
-var lean_direction: int   = 0
+# Continuous, [-1, 1]: how far, and which way, the player is currently
+# steering. -1 / 0 / 1 remain valid (Game.gd's reset and the screenshot
+# rig in _shots.gd both assign those directly).
+var lean_direction: float = 0.0
 var has_shield:     bool  = false
 var is_dead:        bool  = false
 var victory:        bool  = false
@@ -23,7 +34,7 @@ var obstacle_damage:  float = 0.25
 
 var _in_wet_zone_count: int   = 0
 var _wet_t:             float = 0.0
-var _touch_sides:       Dictionary = {}
+var _steer_touch_index: int   = -1  # -1 = no active steering touch
 
 signal died(reason: String)
 signal size_changed(new_size: float)
@@ -117,34 +128,41 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if is_dead: return
-	if not event is InputEventScreenTouch: return
-	var e    := event as InputEventScreenTouch
-	var half := get_viewport().get_visible_rect().size.x * 0.5
-	if e.pressed:
-		_touch_sides[e.index] = e.position.x < half
-	else:
-		_touch_sides.erase(e.index)
-	_resolve_touch_lean()
 
-func _resolve_touch_lean() -> void:
-	var lefts:  int = 0
-	var rights: int = 0
-	for v in _touch_sides.values():
-		if bool(v): lefts  += 1
-		else:       rights += 1
-	if   lefts > 0 and rights == 0: lean_direction = -1
-	elif rights > 0 and lefts == 0: lean_direction = 1
-	else:                            lean_direction = 0
+	# Steering used to be decided once, at the moment a finger touched down,
+	# and then ignored for the rest of that touch — dragging did nothing
+	# until you lifted and tapped again. InputEventScreenDrag fires on every
+	# frame the finger moves, so listening for it is what actually makes
+	# steering live instead of a one-shot decision.
+	if event is InputEventScreenTouch:
+		var e := event as InputEventScreenTouch
+		if e.pressed:
+			if _steer_touch_index == -1:
+				_steer_touch_index = e.index
+				_update_steer_from_x(e.position.x)
+			# A second simultaneous touch is ignored rather than fought over;
+			# only the touch that started steering can change it.
+		elif e.index == _steer_touch_index:
+			_steer_touch_index = -1
+			lean_direction = 0.0
+	elif event is InputEventScreenDrag:
+		var e := event as InputEventScreenDrag
+		if e.index == _steer_touch_index:
+			_update_steer_from_x(e.position.x)
+
+func _update_steer_from_x(x: float) -> void:
+	var centre := get_viewport().get_visible_rect().size.x * 0.5
+	lean_direction = clampf((x - centre) / STEER_FALLOFF, -1.0, 1.0)
 
 # ── Physics ────────────────────────────────────────────────────────────────
 
 func _physics_process(delta: float) -> void:
 	if is_dead: return
 
-	if _touch_sides.is_empty():
-		if   Input.is_action_pressed("lean_left"):  lean_direction = -1
-		elif Input.is_action_pressed("lean_right"): lean_direction = 1
-		else:                                        lean_direction = 0
+	if _steer_touch_index == -1:
+		if   Input.is_action_pressed("lean_left"):  lean_direction = -1.0
+		elif Input.is_action_pressed("lean_right"): lean_direction = 1.0
+		else:                                        lean_direction = 0.0
 
 	_apply_lateral_physics()
 	velocity.y = forward_speed
@@ -176,11 +194,11 @@ func _physics_process(delta: float) -> void:
 func _apply_lateral_physics() -> void:
 	var build_rate: float = 0.028 + size * 0.042
 	var max_vel:    float = 2.0   + size * 2.2
-	if lean_direction != 0:
+	if lean_direction != 0.0:
 		lean_magnitude = clampf(lean_magnitude + build_rate, 0.0, 1.0)
 	else:
 		lean_magnitude = maxf(0.0, lean_magnitude - EASE_RATE)
-	velocity.x += float(lean_direction) * lean_magnitude * max_vel * 0.13
+	velocity.x += lean_direction * lean_magnitude * max_vel * 0.13
 	velocity.x *= 0.80
 	velocity.x  = clampf(velocity.x, -max_vel, max_vel)
 	velocity.x *= LATERAL_SCALE

@@ -1,7 +1,7 @@
 class_name LogoArt
 extends RefCounted
 
-# SINGLE SOURCE OF TRUTH for the Soap Escape logo.
+# SINGLE SOURCE OF TRUTH for the Soapy Escape logo.
 # Two lockups share one recipe (sky, wavy water, floating soap, arched name):
 #   paint_wide()  — horizontal sticker, for the Home screen
 #   paint_badge() — square badge, for the app icon
@@ -36,7 +36,7 @@ static func paint_wide(ci: CanvasItem, centre: Vector2, scale: float = 1.0,
 			0.0, TAU, 16, Color(1, 1, 1, 0.6), 1.8 * scale, true)
 
 	arch_text(ci, centre + Vector2(0, -34).rotated(ang) * scale, ang, 330.0 * scale,
-		"Soap Escape", int(34.0 * scale), PINK, PURPLE)
+		"Soapy Escape", int(34.0 * scale), PINK, PURPLE)
 	SoapArt.paint(ci, centre + Vector2(0, 24).rotated(ang) * scale, 1.65 * scale, SoapArt.CALM)
 
 	if extras:
@@ -102,7 +102,7 @@ static func paint_badge(ci: CanvasItem, centre: Vector2, scale: float = 1.0) -> 
 		ci.draw_arc(centre + ((b[0] as Vector2) * scale).rotated(ang), float(b[1]) * scale,
 			0.0, TAU, 16, Color(1, 1, 1, 0.6), 1.8 * scale, true)
 	arch_text(ci, centre + Vector2(0, -44).rotated(ang) * scale, ang, 260.0 * scale,
-		"Soap Escape", int(21.0 * scale), PINK, PURPLE)
+		"Soapy Escape", int(21.0 * scale), PINK, PURPLE)
 	SoapArt.paint(ci, centre + Vector2(0, 16).rotated(ang) * scale, 1.45 * scale, SoapArt.CALM)
 
 ## Wavy surface plus the part of the rounded rect below it, so the fill can

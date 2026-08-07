@@ -14,12 +14,22 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="Soap Escape"
+config/name="Soapy Escape"
 run/main_scene="res://scenes/Main.tscn"
 config/icon="res://SoapEscape_AppIcon_1024.png"
 config/features=PackedStringArray("4.7", "Mobile")
 boot_splash/bg_color=Color(0.992157, 0.94902, 0.972549, 1)
 boot_splash/show_image=false
+; The runtime engine splash (drawn after the process starts, gated by
+; show_image above) is a separate mechanism from iOS's native Launch Screen
+; storyboard, which iOS displays before the engine even starts and which
+; Godot generates at EXPORT time from application/boot_splash/image. That
+; export path ignores show_image entirely: if this key is empty, Godot
+; falls back to bundling ITS OWN logo (boot_splash_png, compiled into the
+; editor) as the launch screen image — see
+; EditorExportPlatformIOS::_export_loading_screen_file in the engine source.
+; That fallback is what actually put the Godot icon on screen on launch.
+boot_splash/image="res://SoapEscape_AppIcon_1024.png"
 
 [autoload]
 

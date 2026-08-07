@@ -30,10 +30,10 @@ Placeholders to replace before submitting are written in `ALL_CAPS_UNDERSCORED`.
 Soapy Escape
 ```
 
-"Soap Escape" was already taken on the App Store, so the listing carries the
-extra letter. Nothing else does: the name under the icon on the home screen
-comes from the Godot project name and still reads "Soap Escape", the in-game
-logo is unchanged, and the bundle identifier is unaffected.
+"Soap Escape" was already taken on the App Store, which is why the listing
+carries the extra letter. The name under the icon on the home screen and the
+in-game logo now match this too. Only the bundle identifier still reads
+`soapescape` — that one is permanent once an app record exists.
 
 Unlike the bundle ID, the listing name is not permanent. It can be changed with
 any future version submission.
