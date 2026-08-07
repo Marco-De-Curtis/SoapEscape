@@ -1,5 +1,7 @@
 extends Control
 
+const SafeArea = preload("res://scripts/SafeArea.gd")
+
 const OUTLINE_COLOR := Color("#1a1a2e")
 const SOAP_COLOR    := Color("#c4b5fd")
 const CHEEK_COLOR   := Color(0.95, 0.56, 0.70, 0.68)
@@ -8,16 +10,12 @@ const C_PURPLE      := Color("#7c3aed")
 const C_BG          := Color("#fdf2f8")  # color_bg_app
 const SHADOW_PINK    := Color(181.0/255.0, 45.0/255.0, 112.0/255.0, 0.45)
 const SHADOW_PURPLE  := Color(91.0/255.0, 33.0/255.0, 182.0/255.0, 0.45)
-const ISLAND_W := 126.0
-const ISLAND_H := 37.0
-const ISLAND_TOP := 12.0
 
 
 var _bob_t: float = 0.0
 
 func _ready() -> void:
 	_build_background()
-	_build_dynamic_island()
 	_build_tagline()
 	_build_buttons()
 	if not SaveData.is_onboarding_shown():
@@ -38,22 +36,6 @@ func _draw() -> void:
 
 func _build_background() -> void:
 	pass  # Background drawn in _draw() — ColorRect child would cover the soap illustration
-
-# ── Dynamic Island ─────────────────────────────────────────────────────────
-
-func _build_dynamic_island(parent: Control = self) -> void:
-	var island := Panel.new()
-	var sty := StyleBoxFlat.new()
-	sty.bg_color = OUTLINE_COLOR  # color_outline_dark
-	sty.set_corner_radius_all(int(ISLAND_H * 0.5))
-	island.add_theme_stylebox_override("panel", sty)
-	island.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	island.anchor_left  = 0.5; island.anchor_right  = 0.5
-	island.offset_left  = -ISLAND_W * 0.5
-	island.offset_right =  ISLAND_W * 0.5
-	island.offset_top    = ISLAND_TOP
-	island.offset_bottom = ISLAND_TOP + ISLAND_H
-	parent.add_child(island)
 
 # ── Title ──────────────────────────────────────────────────────────────────
 
@@ -195,7 +177,6 @@ func _show_onboarding_carousel() -> void:
 	overlay.add_child(bg)
 
 	_build_grid(overlay)
-	_build_dynamic_island(overlay)
 
 	# Skip
 	var skip := Button.new()
@@ -210,9 +191,13 @@ func _show_onboarding_carousel() -> void:
 	skip.add_theme_stylebox_override("hover",   StyleBoxEmpty.new())
 	skip.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
 	skip.add_theme_stylebox_override("focus",   StyleBoxEmpty.new())
+	# Below the real safe-area inset. At the old fixed y=20 this sat in the
+	# status bar / notch band — the first control a new player ever sees,
+	# placed where the hardware can clip it.
+	var skip_top := SafeArea.content_top(self)
 	skip.anchor_left = 1.0; skip.anchor_right = 1.0
 	skip.offset_left = -70.0; skip.offset_right = -20.0
-	skip.offset_top  = 20.0;  skip.offset_bottom = 48.0
+	skip.offset_top  = skip_top;  skip.offset_bottom = skip_top + 28.0
 	skip.pressed.connect(_skip_onboarding)
 	overlay.add_child(skip)
 
@@ -220,7 +205,7 @@ func _show_onboarding_carousel() -> void:
 	_carousel_illus = Control.new()
 	_carousel_illus.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_carousel_illus.anchor_right = 1.0
-	_carousel_illus.offset_top    = 60.0
+	_carousel_illus.offset_top    = maxf(60.0, skip_top + 36.0)
 	_carousel_illus.offset_bottom = SHEET_TOP
 	overlay.add_child(_carousel_illus)
 
