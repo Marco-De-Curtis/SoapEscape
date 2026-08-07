@@ -64,7 +64,6 @@ func start_level(level_index: int) -> void:
 	_soap.obstacle_damage = float(_lv.get("obstacle_damage", 0.25))
 	_soap.position        = Vector2(0.0, 60.0)
 	_soap.velocity        = Vector2.ZERO
-	_soap._lateral_vel    = 0.0
 	_soap._in_wet_zone_count = 0
 
 	_spawner.setup($World, _soap)
