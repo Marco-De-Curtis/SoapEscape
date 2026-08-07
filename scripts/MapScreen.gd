@@ -1,6 +1,8 @@
 class_name MapScreen
 extends Control
 
+const SafeArea = preload("res://scripts/SafeArea.gd")
+
 const NODE_POSITIONS: Array[Vector2] = [
 	Vector2( 90, 720), Vector2(280, 650),
 	Vector2(110, 578), Vector2(276, 508),
@@ -9,11 +11,11 @@ const NODE_POSITIONS: Array[Vector2] = [
 	Vector2(105, 148), Vector2(268,  76)
 ]
 
-# Matches HUD.gd's TOP_Y. The map used to anchor its top bar at y=0, so on any
-# iPhone with a Dynamic Island the title and the "unlocked" pill rendered
-# underneath the status bar. The whole map shifts down with the bar so the
-# first level node still clears it.
-const TOP_INSET := 56.0
+# Set from the device's real safe-area inset in _ready, not hardcoded: this
+# was 56 to clear a Dynamic Island that the app used to draw itself, which
+# wasted a visible band on every phone that has no island. The whole map
+# shifts down with the bar so the first level node still clears it.
+var TOP_INSET := 56.0
 
 const C_PATH   := Color("#f9a8d4")
 const C_DONE   := Color("#86efac")
@@ -26,6 +28,7 @@ const C_PINK   := Color("#d63384")
 @onready var nodes_root: Control   = $LevelNodes
 
 func _ready() -> void:
+	TOP_INSET = SafeArea.content_top(self)
 	bg.color = Color("#fdf2f8")  # color_bg_app
 	_build_grid()
 	_build_path()
@@ -110,19 +113,7 @@ func _build_top_bar() -> void:
 	border.custom_minimum_size = Vector2(0.0, 2.0)
 	bar.add_child(border)
 
-	_build_dynamic_island()
 
-func _build_dynamic_island() -> void:
-	var island := Panel.new()
-	var sty := StyleBoxFlat.new()
-	sty.bg_color = Color("#1a1a2e")  # color_outline_dark
-	sty.set_corner_radius_all(18)
-	island.add_theme_stylebox_override("panel", sty)
-	island.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	island.anchor_left  = 0.5; island.anchor_right  = 0.5
-	island.offset_left  = -63.0; island.offset_right = 63.0
-	island.offset_top    = 12.0; island.offset_bottom = 49.0
-	add_child(island)
 
 # ── Dashed path ────────────────────────────────────────────────────────────
 

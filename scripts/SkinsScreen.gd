@@ -31,21 +31,9 @@ func _ready() -> void:
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 
-	_build_dynamic_island()
 	_build_header()
 	_build_gallery()
 
-func _build_dynamic_island() -> void:
-	var island := Panel.new()
-	var sty := StyleBoxFlat.new()
-	sty.bg_color = C_OUTLINE  # color_outline_dark
-	sty.set_corner_radius_all(18)
-	island.add_theme_stylebox_override("panel", sty)
-	island.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	island.anchor_left  = 0.5; island.anchor_right  = 0.5
-	island.offset_left  = -63.0; island.offset_right = 63.0
-	island.offset_top    = 12.0; island.offset_bottom = 49.0
-	add_child(island)
 
 func _build_header() -> void:
 	var back := Button.new()

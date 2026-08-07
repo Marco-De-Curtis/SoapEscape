@@ -1,6 +1,11 @@
 extends CanvasLayer
 
-const TOP_Y    := 56.0   # sits below Dynamic Island / status bar
+const SafeArea = preload("res://scripts/SafeArea.gd")
+
+# Set from the device's real safe-area inset in _ready. Was hardcoded to 56
+# to clear an on-screen Dynamic Island the app drew itself; on hardware
+# without one that reserved a band for nothing.
+var TOP_Y      := 56.0
 const TOP_H    := 48.0
 const BOT_H    := 52.0
 
@@ -18,22 +23,11 @@ var _size_fill:  ColorRect
 var _size_label: Label
 
 func _ready() -> void:
+	TOP_Y = SafeArea.content_top(self)
 	var root: Control = $HUDRoot
 	_build_top_bar(root)
 	_build_bottom_bar(root)
-	_build_dynamic_island(root)
 
-func _build_dynamic_island(root: Control) -> void:
-	var island := Panel.new()
-	var sty := StyleBoxFlat.new()
-	sty.bg_color = Color("#1a1a2e")  # color_outline_dark
-	sty.set_corner_radius_all(18)
-	island.add_theme_stylebox_override("panel", sty)
-	island.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	island.anchor_left  = 0.5; island.anchor_right  = 0.5
-	island.offset_left  = -63.0; island.offset_right = 63.0
-	island.offset_top    = 12.0; island.offset_bottom = 49.0
-	root.add_child(island)
 
 # ── Top bar ────────────────────────────────────────────────────────────────
 
