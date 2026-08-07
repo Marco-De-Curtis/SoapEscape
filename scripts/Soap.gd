@@ -9,13 +9,15 @@ const LATERAL_SCALE: float = 60.0
 const EASE_RATE:     float = 0.060
 const SHRINK_RATE:   float = 0.012
 
-# Distance in points, from screen centre, at which steering reaches full
-# strength. Inside this band, lean is analog and tracks the finger live;
-# outside it (the outer edges, where a thumb naturally rests) it is pegged
-# at max, same as the old tap-a-half behaviour. This is the number to
-# retune first if steering feels too twitchy (lower it) or too heavy
-# (raise it) once tested on a real device.
-const STEER_FALLOFF: float = 90.0
+# Distance in points a finger has to drag, from wherever it first touched
+# down, to swing steering from where a tap left it to fully the other way.
+# Deliberately relative to the touch's OWN start point, not the screen's
+# centre: a rightward swipe must always ease toward/into a rightward lean,
+# even if the whole swipe happens on the left half of the screen and never
+# crosses the middle. This is the number to retune first if steering feels
+# too twitchy (lower it) or too heavy (raise it) once tested on a real
+# device.
+const STEER_DRAG_RADIUS: float = 90.0
 
 const OUTLINE_COLOR := SoapArt.OUTLINE_COLOR
 
@@ -35,6 +37,8 @@ var obstacle_damage:  float = 0.25
 var _in_wet_zone_count: int   = 0
 var _wet_t:             float = 0.0
 var _steer_touch_index: int   = -1  # -1 = no active steering touch
+var _steer_anchor_x:    float = 0.0 # where that touch first landed
+var _steer_tap_bias:    float = 0.0 # instant lean from which half it was on
 
 signal died(reason: String)
 signal size_changed(new_size: float)
@@ -129,17 +133,26 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if is_dead: return
 
-	# Steering used to be decided once, at the moment a finger touched down,
-	# and then ignored for the rest of that touch — dragging did nothing
-	# until you lifted and tapped again. InputEventScreenDrag fires on every
-	# frame the finger moves, so listening for it is what actually makes
-	# steering live instead of a one-shot decision.
+	# Steering used to be decided once, at the moment a finger touched down
+	# (by which half of the screen it landed on), and then ignored for the
+	# rest of that touch. That meant a swipe from the left half toward the
+	# right — without ever crossing the screen's physical centre — produced
+	# no change at all: it was still "the left half" the whole way.
+	#
+	# A tap still gives the old instant full-strength lean, from which half
+	# it landed on (_steer_tap_bias). Dragging then adds a continuous offset
+	# measured from THIS TOUCH'S OWN starting point, not the screen centre,
+	# so a rightward swipe always eases toward and past a rightward lean,
+	# regardless of which half of the screen it happens on.
 	if event is InputEventScreenTouch:
 		var e := event as InputEventScreenTouch
 		if e.pressed:
 			if _steer_touch_index == -1:
 				_steer_touch_index = e.index
-				_update_steer_from_x(e.position.x)
+				_steer_anchor_x    = e.position.x
+				var centre := get_viewport().get_visible_rect().size.x * 0.5
+				_steer_tap_bias = -1.0 if e.position.x < centre else 1.0
+				lean_direction  = _steer_tap_bias
 			# A second simultaneous touch is ignored rather than fought over;
 			# only the touch that started steering can change it.
 		elif e.index == _steer_touch_index:
@@ -148,11 +161,8 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventScreenDrag:
 		var e := event as InputEventScreenDrag
 		if e.index == _steer_touch_index:
-			_update_steer_from_x(e.position.x)
-
-func _update_steer_from_x(x: float) -> void:
-	var centre := get_viewport().get_visible_rect().size.x * 0.5
-	lean_direction = clampf((x - centre) / STEER_FALLOFF, -1.0, 1.0)
+			var offset := e.position.x - _steer_anchor_x
+			lean_direction = clampf(_steer_tap_bias + offset / STEER_DRAG_RADIUS, -1.0, 1.0)
 
 # ── Physics ────────────────────────────────────────────────────────────────
 
