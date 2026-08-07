@@ -40,6 +40,12 @@ var _steer_touch_index: int   = -1  # -1 = no active steering touch
 var _steer_anchor_x:    float = 0.0 # where that touch first landed
 var _steer_tap_bias:    float = 0.0 # instant lean from which half it was on
 
+# Small-scale lateral speed accumulator, in the same units as max_vel
+# (roughly ±2 to ±4.4). velocity.x is DERIVED from this every frame, never
+# accumulated in place — see _apply_lateral_physics for why that distinction
+# is load-bearing.
+var _lateral_vel: float = 0.0
+
 signal died(reason: String)
 signal size_changed(new_size: float)
 signal wet_zone_changed(in_zone: bool)
@@ -184,6 +190,7 @@ func _physics_process(delta: float) -> void:
 
 	if get_slide_collision_count() > 0:
 		velocity.x     = 0.0
+		_lateral_vel   = 0.0
 		lean_magnitude = 0.0
 
 	if _in_wet_zone_count > 0:
@@ -208,10 +215,19 @@ func _apply_lateral_physics() -> void:
 		lean_magnitude = clampf(lean_magnitude + build_rate, 0.0, 1.0)
 	else:
 		lean_magnitude = maxf(0.0, lean_magnitude - EASE_RATE)
-	velocity.x += lean_direction * lean_magnitude * max_vel * 0.13
-	velocity.x *= 0.80
-	velocity.x  = clampf(velocity.x, -max_vel, max_vel)
-	velocity.x *= LATERAL_SCALE
+	# Bug this replaces: velocity.x was both accumulated in place AND holding
+	# the final ×60-scaled speed move_and_slide() consumes. Once scaled, the
+	# residual (order ~250) completely swamped the per-frame steering nudge
+	# (order ~0.5), so the very next line's clampf() to ±max_vel just
+	# re-pinned it to the SAME extreme every frame regardless of the current
+	# lean_direction — the soap could get stuck committed to one direction
+	# and simply not respond to the opposite input, for as long as the
+	# player held it. _lateral_vel stays in the small max_vel-scale range
+	# across frames; velocity.x is derived fresh from it, never compounded.
+	_lateral_vel += lean_direction * lean_magnitude * max_vel * 0.13
+	_lateral_vel *= 0.80
+	_lateral_vel  = clampf(_lateral_vel, -max_vel, max_vel)
+	velocity.x = _lateral_vel * LATERAL_SCALE
 
 # ── Size helpers ───────────────────────────────────────────────────────────
 
