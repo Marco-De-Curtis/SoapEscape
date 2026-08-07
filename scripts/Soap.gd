@@ -5,9 +5,40 @@ extends CharacterBody2D
 # shared with every UI screen. Only gameplay-side constants belong here.
 const BASE_WIDTH:    float = SoapArt.BASE_WIDTH
 const BASE_HEIGHT:   float = SoapArt.BASE_HEIGHT
-const LATERAL_SCALE: float = 60.0
-const EASE_RATE:     float = 0.060
 const SHRINK_RATE:   float = 0.012
+
+# Lateral top speed in real px/s, blended by size (same ceiling the old
+# accumulator model asymptoted toward at size=1: 4.2 * old LATERAL_SCALE 60
+# = 252, so per-level lane widths don't need re-balancing).
+const LATERAL_SPEED_MIN:   float = 120.0
+const LATERAL_SPEED_RANGE: float = 132.0
+
+# The only two motion-feel knobs, in real seconds — framerate/physics-tick
+# independent by construction, no hidden fixed-point algebra to solve to
+# know what they converge to (that algebra was never actually done for the
+# formula this replaced, which is how it shipped able to get permanently
+# stuck reversing direction, then — after that got fixed — shipped barely
+# reaching half of its own top speed. Neither was caught because nobody
+# could read the real behaviour straight off the constants).
+#
+# RAMP_TIME is deliberately HALF of the time you'd naively want for a
+# standing-start-to-top-speed ramp: move_toward advances at a constant
+# rate, so reversing from full speed one way to full speed the other way
+# covers 2x the distance a standing start does, taking 2x as long at the
+# same rate. Tuning this against the reversal (the case that actually
+# matters for dodging) rather than the ramp means the ramp comes out
+# snappier than it looks, not slower.
+const LATERAL_RAMP_TIME: float = 0.14   # seconds, full stop to top speed
+const LATERAL_EASE_TIME: float = 0.16   # seconds, top speed to a stop on release
+
+# Cosmetic only: squash-tween and speed-line intensity. Deliberately NOT
+# read by the velocity math above — lean_magnitude is directly poked by
+# _shots.gd's screenshot rig (soap.lean_magnitude = 0.90 while forcing
+# velocity to zero, to pose the soap for App Store captures), so it has to
+# stay independently settable rather than derived from motion.
+const LEAN_VISUAL_BUILD_MIN:   float = 0.028
+const LEAN_VISUAL_BUILD_RANGE: float = 0.042
+const LEAN_VISUAL_EASE:        float = 0.10
 
 # Distance in points a finger has to drag, from wherever it first touched
 # down, to swing steering from where a tap left it to fully the other way.
@@ -39,12 +70,6 @@ var _wet_t:             float = 0.0
 var _steer_touch_index: int   = -1  # -1 = no active steering touch
 var _steer_anchor_x:    float = 0.0 # where that touch first landed
 var _steer_tap_bias:    float = 0.0 # instant lean from which half it was on
-
-# Small-scale lateral speed accumulator, in the same units as max_vel
-# (roughly ±2 to ±4.4). velocity.x is DERIVED from this every frame, never
-# accumulated in place — see _apply_lateral_physics for why that distinction
-# is load-bearing.
-var _lateral_vel: float = 0.0
 
 signal died(reason: String)
 signal size_changed(new_size: float)
@@ -180,7 +205,7 @@ func _physics_process(delta: float) -> void:
 		elif Input.is_action_pressed("lean_right"): lean_direction = 1.0
 		else:                                        lean_direction = 0.0
 
-	_apply_lateral_physics()
+	_apply_lateral_physics(delta)
 	velocity.y = forward_speed
 	move_and_slide()
 
@@ -190,7 +215,6 @@ func _physics_process(delta: float) -> void:
 
 	if get_slide_collision_count() > 0:
 		velocity.x     = 0.0
-		_lateral_vel   = 0.0
 		lean_magnitude = 0.0
 
 	if _in_wet_zone_count > 0:
@@ -208,26 +232,26 @@ func _physics_process(delta: float) -> void:
 	_update_visuals()
 	_update_speed_lines()
 
-func _apply_lateral_physics() -> void:
-	var build_rate: float = 0.028 + size * 0.042
-	var max_vel:    float = 2.0   + size * 2.2
+func _apply_lateral_physics(delta: float) -> void:
+	# Cosmetic only, feeds _update_squash / _update_speed_lines — see the
+	# LEAN_VISUAL_* constants for why this stays decoupled from velocity.
+	var visual_build: float = LEAN_VISUAL_BUILD_MIN + size * LEAN_VISUAL_BUILD_RANGE
 	if lean_direction != 0.0:
-		lean_magnitude = clampf(lean_magnitude + build_rate, 0.0, 1.0)
+		lean_magnitude = clampf(lean_magnitude + visual_build, 0.0, 1.0)
 	else:
-		lean_magnitude = maxf(0.0, lean_magnitude - EASE_RATE)
-	# Bug this replaces: velocity.x was both accumulated in place AND holding
-	# the final ×60-scaled speed move_and_slide() consumes. Once scaled, the
-	# residual (order ~250) completely swamped the per-frame steering nudge
-	# (order ~0.5), so the very next line's clampf() to ±max_vel just
-	# re-pinned it to the SAME extreme every frame regardless of the current
-	# lean_direction — the soap could get stuck committed to one direction
-	# and simply not respond to the opposite input, for as long as the
-	# player held it. _lateral_vel stays in the small max_vel-scale range
-	# across frames; velocity.x is derived fresh from it, never compounded.
-	_lateral_vel += lean_direction * lean_magnitude * max_vel * 0.13
-	_lateral_vel *= 0.80
-	_lateral_vel  = clampf(_lateral_vel, -max_vel, max_vel)
-	velocity.x = _lateral_vel * LATERAL_SCALE
+		lean_magnitude = maxf(0.0, lean_magnitude - LEAN_VISUAL_EASE)
+
+	# velocity.x IS the state here — no separate small-scale accumulator
+	# that has to be kept in sync with it by hand. That's what the previous
+	# version got wrong: it stored the same quantity two ways (a small
+	# per-frame accumulator, and that value re-scaled into velocity.x) and
+	# nothing enforced they stayed consistent, which is how it ended up
+	# able to get stuck fully committed to one direction, deaf to the
+	# opposite input, for as long as the player held it.
+	var max_speed: float = LATERAL_SPEED_MIN + size * LATERAL_SPEED_RANGE
+	var target:    float = lean_direction * max_speed
+	var ramp_time: float = LATERAL_RAMP_TIME if lean_direction != 0.0 else LATERAL_EASE_TIME
+	velocity.x = move_toward(velocity.x, target, (max_speed / ramp_time) * delta)
 
 # ── Size helpers ───────────────────────────────────────────────────────────
 
