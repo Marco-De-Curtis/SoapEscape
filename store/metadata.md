@@ -81,7 +81,7 @@ WATCH YOUR FACE
 Your soap tells you how it is going before the meter does. Calm lavender turns to worried yellow, then panicked orange, then a red bar of soap that is one puddle away from the end.
 
 TEN ESCALATING LEVELS
-The channel narrows, the current speeds up, and the qualifying size creeps higher every level. Light Rain is gentle. Drain's Edge is not. Three stars needs almost all of you intact.
+The channel narrows, the current speeds up, and the qualifying size creeps higher every level. Aegean Rain is gentle. Thames Edge is not. Three stars needs almost all of you intact.
 
 GRAB WHAT YOU CAN
 Soap slivers top you back up. Bubble shields eat one hit for free. Both are placed where you have to choose between the safe line and the greedy one.
