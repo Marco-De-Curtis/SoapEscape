@@ -35,7 +35,7 @@ const LEVELS: Array = [
 		"obstacle_damage": 0.22,
 		"channel_half": 125.0,
 		"level_length": 2450.0,
-		"forward_speed": 168.0,
+		"forward_speed": 188.0,
 		"procedural": false,
 		"tutorial": true,
 		"wet_zones": [
@@ -59,7 +59,7 @@ const LEVELS: Array = [
 		"obstacle_damage": 0.24,
 		"channel_half": 121.0,
 		"level_length": 2850.0,
-		"forward_speed": 184.0,
+		"forward_speed": 206.0,
 		"procedural": false,
 		"tutorial": false,
 		"wet_zones": [
@@ -89,7 +89,7 @@ const LEVELS: Array = [
 		"obstacle_damage": 0.26,
 		"channel_half": 117.0,
 		"level_length": 3100.0,
-		"forward_speed": 192.0,
+		"forward_speed": 215.0,
 		"procedural": false,
 		"tutorial": false,
 		"wet_zones": [
@@ -118,7 +118,7 @@ const LEVELS: Array = [
 	{
 		"id": 4, "name": "Dutch Current", "flag": "🇳🇱",
 		"min_soap": 0.44, "obstacle_damage": 0.27, "channel_half": 114.0,
-		"level_length": 3300.0, "forward_speed": 198.0,
+		"level_length": 3300.0, "forward_speed": 222.0,
 		"procedural": true, "proc_seed": 6001,
 		"proc_wet_zone_count": 5, "proc_wet_zone_height_min": 300.0, "proc_wet_zone_height_max": 430.0,
 		"proc_obstacle_count": 16, "proc_obstacle_radius_min": 24.0, "proc_obstacle_radius_max": 29.0,
@@ -127,7 +127,7 @@ const LEVELS: Array = [
 	{
 		"id": 5, "name": "Sisserou Tunnel", "flag": "🇩🇲",
 		"min_soap": 0.41, "obstacle_damage": 0.28, "channel_half": 110.0,
-		"level_length": 3550.0, "forward_speed": 204.0,
+		"level_length": 3550.0, "forward_speed": 228.0,
 		"procedural": true, "proc_seed": 7001,
 		"proc_wet_zone_count": 5, "proc_wet_zone_height_min": 310.0, "proc_wet_zone_height_max": 450.0,
 		"proc_obstacle_count": 20, "proc_obstacle_radius_min": 24.0, "proc_obstacle_radius_max": 30.0,
@@ -135,8 +135,8 @@ const LEVELS: Array = [
 	},
 	{
 		"id": 6, "name": "Pula Falls", "flag": "🇧🇼",
-		"min_soap": 0.38, "obstacle_damage": 0.28, "channel_half": 107.0,
-		"level_length": 3800.0, "forward_speed": 210.0,
+		"min_soap": 0.38, "obstacle_damage": 0.29, "channel_half": 107.0,
+		"level_length": 3800.0, "forward_speed": 235.0,
 		"procedural": true, "proc_seed": 8001,
 		"proc_wet_zone_count": 6, "proc_wet_zone_height_min": 315.0, "proc_wet_zone_height_max": 460.0,
 		"proc_obstacle_count": 24, "proc_obstacle_radius_min": 25.0, "proc_obstacle_radius_max": 32.0,
@@ -144,8 +144,8 @@ const LEVELS: Array = [
 	},
 	{
 		"id": 7, "name": "Sauna Deep Drain", "flag": "🇫🇮",
-		"min_soap": 0.35, "obstacle_damage": 0.28, "channel_half": 104.0,
-		"level_length": 4050.0, "forward_speed": 216.0,
+		"min_soap": 0.35, "obstacle_damage": 0.30, "channel_half": 104.0,
+		"level_length": 4050.0, "forward_speed": 242.0,
 		"procedural": true, "proc_seed": 9001,
 		"proc_wet_zone_count": 6, "proc_wet_zone_height_min": 325.0, "proc_wet_zone_height_max": 475.0,
 		"proc_obstacle_count": 28, "proc_obstacle_radius_min": 25.0, "proc_obstacle_radius_max": 33.0,
@@ -153,8 +153,8 @@ const LEVELS: Array = [
 	},
 	{
 		"id": 8, "name": "Sakura Pipe", "flag": "🇯🇵",
-		"min_soap": 0.30, "obstacle_damage": 0.28, "channel_half": 100.0,
-		"level_length": 4300.0, "forward_speed": 222.0,
+		"min_soap": 0.30, "obstacle_damage": 0.31, "channel_half": 100.0,
+		"level_length": 4300.0, "forward_speed": 249.0,
 		"procedural": true, "proc_seed": 10001,
 		"proc_wet_zone_count": 7, "proc_wet_zone_height_min": 335.0, "proc_wet_zone_height_max": 490.0,
 		"proc_obstacle_count": 32, "proc_obstacle_radius_min": 26.0, "proc_obstacle_radius_max": 35.0,
@@ -162,8 +162,8 @@ const LEVELS: Array = [
 	},
 	{
 		"id": 9, "name": "Argentine Flood", "flag": "🇦🇷",
-		"min_soap": 0.28, "obstacle_damage": 0.28, "channel_half": 96.0,
-		"level_length": 4550.0, "forward_speed": 230.0,
+		"min_soap": 0.28, "obstacle_damage": 0.33, "channel_half": 96.0,
+		"level_length": 4550.0, "forward_speed": 258.0,
 		"procedural": true, "proc_seed": 9999,
 		"proc_wet_zone_count": 7, "proc_wet_zone_height_min": 345.0, "proc_wet_zone_height_max": 510.0,
 		"proc_obstacle_count": 38, "proc_obstacle_radius_min": 26.0, "proc_obstacle_radius_max": 36.0,
@@ -171,8 +171,8 @@ const LEVELS: Array = [
 	},
 	{
 		"id": 10, "name": "Thames Edge", "flag": "🇬🇧",
-		"min_soap": 0.24, "obstacle_damage": 0.28, "channel_half": 92.0,
-		"level_length": 4800.0, "forward_speed": 242.0,
+		"min_soap": 0.24, "obstacle_damage": 0.35, "channel_half": 92.0,
+		"level_length": 4800.0, "forward_speed": 271.0,
 		"procedural": true, "proc_seed": 10999,
 		"proc_wet_zone_count": 8, "proc_wet_zone_height_min": 360.0, "proc_wet_zone_height_max": 530.0,
 		"proc_obstacle_count": 44, "proc_obstacle_radius_min": 27.0, "proc_obstacle_radius_max": 38.0,
