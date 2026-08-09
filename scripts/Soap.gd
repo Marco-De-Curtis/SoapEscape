@@ -105,6 +105,8 @@ signal wet_zone_changed(in_zone: bool)
 @onready var col_shape:     CollisionShape2D = $CollisionShape2D
 
 # Created in _ready
+var _violet_band: Polygon2D
+var _white_band:  Polygon2D
 var _soap_fill:   Polygon2D
 var _soap_shine:  Polygon2D
 var _left_cheek:  Polygon2D
@@ -120,21 +122,35 @@ func _ready() -> void:
 	soap_body.color = OUTLINE_COLOR
 	soap_body.z_index = 0
 
-	# Fill layer — same shape but inset ~15%, renders on top of outline
+	# Sticker-rim double layer — violet band first (contrast against the
+	# lane's own near-white fill), then a thicker white band inset inside it.
+	# See SoapArt.body_violet()/body_white() for why these are absolute band
+	# widths rather than a proportional inset.
+	_violet_band = Polygon2D.new()
+	_violet_band.color   = SoapArt.VIOLET_BAND_COLOR
+	_violet_band.z_index = 1
+	add_child(_violet_band)
+
+	_white_band = Polygon2D.new()
+	_white_band.color   = SoapArt.WHITE_BAND_COLOR
+	_white_band.z_index = 2
+	add_child(_white_band)
+
+	# Fill layer — inset further inside the two bands above, renders on top
 	_soap_fill = Polygon2D.new()
 	_soap_fill.color   = SoapArt.FILL_COLORS[0]
-	_soap_fill.z_index = 1
+	_soap_fill.z_index = 3
 	add_child(_soap_fill)
 
 	# Specular highlight — top-left of body
 	_soap_shine = Polygon2D.new()
 	_soap_shine.color   = SoapArt.SHEEN_COLOR
-	_soap_shine.z_index = 2
+	_soap_shine.z_index = 4
 	add_child(_soap_shine)
 
-	# Face must render above the fill (z=1) and shine (z=2) layers, otherwise
-	# the fill polygon completely hides the eyes/mouth.
-	face_node.z_index = 3
+	# Face must render above every body layer above, otherwise they hide the
+	# eyes/mouth.
+	face_node.z_index = 5
 
 	# Cheeks — children of face so they move with face offset.
 	# move_child(…, 0) keeps them *behind* the eyes and mouth.
@@ -402,8 +418,10 @@ func _update_body(w: float, h: float, state: int) -> void:
 	var hw := w * 0.5
 	var hh := h * 0.5
 
-	soap_body.polygon  = SoapArt.body_outline(hw, hh)
-	_soap_fill.polygon = SoapArt.body_fill(hw, hh)
+	soap_body.polygon    = SoapArt.body_outline(hw, hh)
+	_violet_band.polygon = SoapArt.body_violet(hw, hh)
+	_white_band.polygon  = SoapArt.body_white(hw, hh)
+	_soap_fill.polygon   = SoapArt.body_fill(hw, hh)
 
 	var base_color: Color = SoapArt.fill_color(state)
 	if _in_wet_zone_count > 0:

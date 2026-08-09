@@ -29,6 +29,14 @@ SKY = (224, 242, 254)       # #e0f2fe
 WATER = (125, 211, 252)     # #7dd3fc
 OUTLINE = (26, 26, 46)      # #1a1a2e
 FILL_CALM = (196, 181, 253) # #c4b5fd
+VIOLET_BAND = (124, 58, 237)  # #7c3aed - sticker rim, mirrors SoapArt.VIOLET_BAND_COLOR
+WHITE_BAND = (255, 255, 255) # sticker rim, mirrors SoapArt.WHITE_BAND_COLOR
+
+# Same absolute-band-width formulas as SoapArt.body_violet()/body_white()/
+# body_fill() - a reference hw of 18 is BASE_WIDTH at scale 1.0.
+_VIOLET_BAND_W = 0.80 / 18.0
+_WHITE_BAND_W = 1.15 / 18.0
+_FILL_GAP = 0.55 / 18.0
 SHEEN = (255, 255, 255, 87)   # white 0.34
 SHINE = (255, 255, 255, 230)  # white 0.90
 SPARK = (255, 255, 255, 191)  # white 0.75
@@ -116,9 +124,21 @@ def paint_soap(img, cx, cy, scale):
     hw, hh = w * 0.5, h * 0.5
     body_r = min(hw, hh) * 0.80
 
-    # Body: dark outline polygon, inset lavender fill, specular streak
+    # Body: dark outline, violet+white sticker rim, inset lavender fill,
+    # specular streak. Violet first - the lane itself is near-white, so a
+    # plain white rim alone washed out against it.
+    vw = hw * _VIOLET_BAND_W
+    ww = hw * _WHITE_BAND_W
+    gap = hw * _FILL_GAP
     blend_polygon(img, scaled(offset(rounded_rect(hw, hh, body_r), cx, cy)), OUTLINE + (255,))
-    blend_polygon(img, scaled(offset(rounded_rect(hw * 0.91, hh * 0.90, body_r * 0.88), cx, cy)),
+    r_violet = max(hw * (0.35 / 18.0), body_r - vw)
+    blend_polygon(img, scaled(offset(rounded_rect(hw - vw, hh - vw, r_violet), cx, cy)),
+                  VIOLET_BAND + (255,))
+    r_white = max(hw * (0.30 / 18.0), body_r - vw - ww)
+    blend_polygon(img, scaled(offset(rounded_rect(hw - vw - ww, hh - vw - ww, r_white), cx, cy)),
+                  WHITE_BAND + (255,))
+    r_fill = max(hw * (0.25 / 18.0), body_r - vw - ww - gap)
+    blend_polygon(img, scaled(offset(rounded_rect(hw - vw - ww - gap, hh - vw - ww - gap, r_fill), cx, cy)),
                   FILL_CALM + (255,))
     streak = rounded_rect(hw * 0.50, max(0.6, hh * 0.11), max(0.6, hh * 0.11))
     blend_polygon(img, scaled(offset(streak, cx - hw * 0.12, cy - hh * 0.60)), SHEEN)

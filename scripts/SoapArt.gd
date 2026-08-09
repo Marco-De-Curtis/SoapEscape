@@ -20,6 +20,13 @@ const SHINE_COLOR   := Color(1.0, 1.0, 1.0, 0.90)
 const SPARK_COLOR   := Color(1.0, 1.0, 1.0, 0.75)
 const STAR_EYE_COLOR := Color("#f59e0b")
 
+# Sticker-rim double layer, between the outline and the fill. Violet first —
+# the lane itself is near-white (Spawner.gd's lane fill is
+# Color(1,1,1,0.92)), so a plain white rim alone washed out against it. The
+# same brand purple used everywhere else in the UI, not a new one-off color.
+const VIOLET_BAND_COLOR := Color("#7c3aed")
+const WHITE_BAND_COLOR  := Color("#ffffff")
+
 # Body fill per state (0 calm, 1 worried, 2 panicked, 3 critical)
 const FILL_COLORS: Array[Color] = [
 	Color("#c4b5fd"),  # calm     — lavender
@@ -131,8 +138,32 @@ static func sheen(hw: float, hh: float) -> PackedVector2Array:
 static func body_outline(hw: float, hh: float) -> PackedVector2Array:
 	return rounded_rect(hw, hh, body_radius(hw, hh))
 
+# Band widths are absolute (relative to a reference hw of 18, i.e. BASE_WIDTH
+# at scale 1.0) rather than proportional like the old single-step fill inset
+# below, so a thin rim doesn't disappear at small sizes the way a percentage
+# inset would. Tuned against the soap's true 36x20 in-game size, not just how
+# it looks blown up in a mockup.
+const _VIOLET_BAND: float = 0.80 / 18.0
+const _WHITE_BAND:  float = 1.15 / 18.0
+const _FILL_GAP:    float = 0.55 / 18.0
+
+static func body_violet(hw: float, hh: float) -> PackedVector2Array:
+	var vw := hw * _VIOLET_BAND
+	var r  := maxf(hw * (0.35 / 18.0), body_radius(hw, hh) - vw)
+	return rounded_rect(hw - vw, hh - vw, r)
+
+static func body_white(hw: float, hh: float) -> PackedVector2Array:
+	var vw := hw * _VIOLET_BAND
+	var ww := hw * _WHITE_BAND
+	var r  := maxf(hw * (0.30 / 18.0), body_radius(hw, hh) - vw - ww)
+	return rounded_rect(hw - vw - ww, hh - vw - ww, r)
+
 static func body_fill(hw: float, hh: float) -> PackedVector2Array:
-	return rounded_rect(hw * 0.91, hh * 0.90, body_radius(hw, hh) * 0.88)
+	var vw  := hw * _VIOLET_BAND
+	var ww  := hw * _WHITE_BAND
+	var gap := hw * _FILL_GAP
+	var r   := maxf(hw * (0.25 / 18.0), body_radius(hw, hh) - vw - ww - gap)
+	return rounded_rect(hw - vw - ww - gap, hh - vw - ww - gap, r)
 
 # ── Eye highlights ─────────────────────────────────────────────────────────
 
@@ -203,6 +234,8 @@ static func paint(ci: CanvasItem, centre: Vector2, scale: float, state: int,
 	var fill := fill_override if fill_override.a > 0.0 else fill_color(state)
 
 	_fill_at(ci, body_outline(hw, hh), centre, OUTLINE_COLOR)
+	_fill_at(ci, body_violet(hw, hh), centre, VIOLET_BAND_COLOR)
+	_fill_at(ci, body_white(hw, hh), centre, WHITE_BAND_COLOR)
 	_fill_at(ci, body_fill(hw, hh), centre, fill)
 	_fill_at(ci, sheen(hw, hh), centre, SHEEN_COLOR)
 	paint_face_only(ci, centre, scale, state)
