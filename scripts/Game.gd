@@ -75,7 +75,7 @@ func start_level(level_index: int) -> void:
 	_update_camera_limits()
 
 	if _hud.has_method("set_level_name"):
-		_hud.set_level_name(str(_lv.get("name", "")))
+		_hud.set_level_name(str(_lv.get("name", "")), str(_lv.get("flag", "")))
 
 	_maybe_show_tutorial()
 

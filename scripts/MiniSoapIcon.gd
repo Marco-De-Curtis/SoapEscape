@@ -22,11 +22,15 @@ func _draw() -> void:
 	if texture_type == "gradient" and texture_gradient:
 		# Gradient skins replace the flat fill, then the face is painted on top.
 		draw_colored_polygon(SoapArt.body_outline(hw, hh), SoapArt.OUTLINE_COLOR)
+		draw_colored_polygon(SoapArt.body_violet(hw, hh), SoapArt.VIOLET_BAND_COLOR)
+		draw_colored_polygon(SoapArt.body_white(hw, hh), SoapArt.WHITE_BAND_COLOR)
 		_draw_gradient_fill(hw, hh)
 		_draw_texture(hw, hh)
 		SoapArt.paint_face_only(self, Vector2.ZERO, body_scale, state)
 	elif texture_type != "none":
 		draw_colored_polygon(SoapArt.body_outline(hw, hh), SoapArt.OUTLINE_COLOR)
+		draw_colored_polygon(SoapArt.body_violet(hw, hh), SoapArt.VIOLET_BAND_COLOR)
+		draw_colored_polygon(SoapArt.body_white(hw, hh), SoapArt.WHITE_BAND_COLOR)
 		draw_colored_polygon(SoapArt.body_fill(hw, hh), _fill())
 		_draw_texture(hw, hh)
 		SoapArt.paint_face_only(self, Vector2.ZERO, body_scale, state)
