@@ -175,9 +175,12 @@ func _build_bottom_bar(root: Control) -> void:
 
 # ── Public API ─────────────────────────────────────────────────────────────
 
-func set_level_name(n: String) -> void:
+func set_level_name(n: String, flag: String = "") -> void:
 	var idx := GameData.current_level_index + 1
-	_level_label.text = "Level %d — %s" % [idx, n]
+	if flag != "":
+		_level_label.text = "Level %d — %s %s" % [idx, flag, n]
+	else:
+		_level_label.text = "Level %d — %s" % [idx, n]
 
 func set_accent(accent: Color) -> void:
 	if _top_border: _top_border.color = accent

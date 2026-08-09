@@ -30,6 +30,7 @@ const LEVELS: Array = [
 	{
 		"id": 1,
 		"name": "Aegean Rain",
+		"flag": "🇬🇷",
 		"min_soap": 0.55,
 		"obstacle_damage": 0.22,
 		"channel_half": 125.0,
@@ -53,6 +54,7 @@ const LEVELS: Array = [
 	{
 		"id": 2,
 		"name": "Bogota Drain",
+		"flag": "🇨🇴",
 		"min_soap": 0.45,
 		"obstacle_damage": 0.24,
 		"channel_half": 121.0,
@@ -82,6 +84,7 @@ const LEVELS: Array = [
 	{
 		"id": 3,
 		"name": "Tuscan Mist",
+		"flag": "🇮🇹",
 		"min_soap": 0.46,
 		"obstacle_damage": 0.26,
 		"channel_half": 117.0,
@@ -113,7 +116,7 @@ const LEVELS: Array = [
 	},
 	# ---- Levels 4-10 — Procedural, steep escalation ----
 	{
-		"id": 4, "name": "Dutch Current",
+		"id": 4, "name": "Dutch Current", "flag": "🇳🇱",
 		"min_soap": 0.44, "obstacle_damage": 0.27, "channel_half": 114.0,
 		"level_length": 3300.0, "forward_speed": 198.0,
 		"procedural": true, "proc_seed": 6001,
@@ -122,7 +125,7 @@ const LEVELS: Array = [
 		"proc_pickup_count": 2
 	},
 	{
-		"id": 5, "name": "Sisserou Tunnel",
+		"id": 5, "name": "Sisserou Tunnel", "flag": "🇩🇲",
 		"min_soap": 0.41, "obstacle_damage": 0.28, "channel_half": 110.0,
 		"level_length": 3550.0, "forward_speed": 204.0,
 		"procedural": true, "proc_seed": 7001,
@@ -131,7 +134,7 @@ const LEVELS: Array = [
 		"proc_pickup_count": 2
 	},
 	{
-		"id": 6, "name": "Pula Falls",
+		"id": 6, "name": "Pula Falls", "flag": "🇧🇼",
 		"min_soap": 0.38, "obstacle_damage": 0.28, "channel_half": 107.0,
 		"level_length": 3800.0, "forward_speed": 210.0,
 		"procedural": true, "proc_seed": 8001,
@@ -140,7 +143,7 @@ const LEVELS: Array = [
 		"proc_pickup_count": 3
 	},
 	{
-		"id": 7, "name": "Sauna Deep Drain",
+		"id": 7, "name": "Sauna Deep Drain", "flag": "🇫🇮",
 		"min_soap": 0.35, "obstacle_damage": 0.28, "channel_half": 104.0,
 		"level_length": 4050.0, "forward_speed": 216.0,
 		"procedural": true, "proc_seed": 9001,
@@ -149,7 +152,7 @@ const LEVELS: Array = [
 		"proc_pickup_count": 3
 	},
 	{
-		"id": 8, "name": "Sakura Pipe",
+		"id": 8, "name": "Sakura Pipe", "flag": "🇯🇵",
 		"min_soap": 0.30, "obstacle_damage": 0.28, "channel_half": 100.0,
 		"level_length": 4300.0, "forward_speed": 222.0,
 		"procedural": true, "proc_seed": 10001,
@@ -158,7 +161,7 @@ const LEVELS: Array = [
 		"proc_pickup_count": 3
 	},
 	{
-		"id": 9, "name": "Argentine Flood",
+		"id": 9, "name": "Argentine Flood", "flag": "🇦🇷",
 		"min_soap": 0.28, "obstacle_damage": 0.28, "channel_half": 96.0,
 		"level_length": 4550.0, "forward_speed": 230.0,
 		"procedural": true, "proc_seed": 9999,
@@ -167,7 +170,7 @@ const LEVELS: Array = [
 		"proc_pickup_count": 3
 	},
 	{
-		"id": 10, "name": "Thames Edge",
+		"id": 10, "name": "Thames Edge", "flag": "🇬🇧",
 		"min_soap": 0.24, "obstacle_damage": 0.28, "channel_half": 92.0,
 		"level_length": 4800.0, "forward_speed": 242.0,
 		"procedural": true, "proc_seed": 10999,

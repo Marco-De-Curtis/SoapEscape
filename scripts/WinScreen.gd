@@ -58,7 +58,8 @@ func _draw_sparkle(pos: Vector2, r: float, col: Color) -> void:
 
 func _build_title(stars: int) -> void:
 	var lv: Dictionary = LevelData.LEVELS[GameData.current_level_index]
-	var level_name: String = lv.get("name", "")
+	var level_flag: String = lv.get("flag", "")
+	var level_name: String = (level_flag + " " if level_flag != "" else "") + str(lv.get("name", ""))
 
 	# "New record!" badge — show whenever stars improved over personal best
 	if stars > GameData.prev_stars:

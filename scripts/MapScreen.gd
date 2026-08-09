@@ -230,7 +230,8 @@ func _build_nodes() -> void:
 		# Level name label (above the node) — shown for every node per screenshot,
 		# including locked ones (design ref: designs/03_level_map.png)
 		var name_lbl := Label.new()
-		name_lbl.text = lv.get("name", "")
+		var lv_flag: String = lv.get("flag", "")
+		name_lbl.text = (lv_flag + " " if lv_flag != "" else "") + str(lv.get("name", ""))
 		name_lbl.add_theme_font_override("font", nunito_sm)
 		name_lbl.add_theme_font_size_override("font_size", 9)
 		name_lbl.add_theme_color_override("font_color", C_PURPLE)
