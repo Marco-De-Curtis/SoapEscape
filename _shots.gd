@@ -216,24 +216,34 @@ func _shot_home(name: String) -> void:
 		SaveData.save_level_result(entry[0], entry[1])
 	# The logo bobs on a sine; hold past the first frames so it is mid-drift
 	# rather than snapped to its starting position.
-	await _show_scene("res://scenes/HomeScreen.tscn", name, 100)
+	#
+	# Also saves a copy straight into the repo (the only res:// write in this
+	# file; everything else goes to the gitignored user://shots) as the iOS
+	# launch screen image, so the native Launch Screen storyboard — which
+	# Godot generates at export time from project.godot's boot_splash/image —
+	# shows the real Home Screen rather than a separately hand-drawn
+	# approximation of it.
+	await _show_scene("res://scenes/HomeScreen.tscn", name, 100, "res://SoapEscape_LaunchScreen.png")
 
-func _show_scene(path: String, name: String, frames: int) -> void:
+func _show_scene(path: String, name: String, frames: int, extra_out: String = "") -> void:
 	var scn: Node = load(path).instantiate()
 	add_child(scn)
 	if scn is Control:
 		(scn as Control).set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for i in frames:
 		await get_tree().process_frame
-	await _capture(name)
+	await _capture(name, extra_out)
 	scn.queue_free()
 	await get_tree().process_frame
 
 # ── Capture ────────────────────────────────────────────────────────────────
 
-func _capture(name: String) -> void:
+func _capture(name: String, extra_out: String = "") -> void:
 	await RenderingServer.frame_post_draw
 	var img := get_viewport().get_texture().get_image()
 	var path := "%s/%s.png" % [OUT, name]
 	var err := img.save_png(path)
 	print("SHOT %s -> %dx%d err=%d" % [name, img.get_width(), img.get_height(), err])
+	if extra_out != "":
+		var err2 := img.save_png(extra_out)
+		print("EXTRA %s -> err=%d" % [extra_out, err2])

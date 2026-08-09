@@ -19,7 +19,6 @@ const COMB_D      := Color("#14b8a6")
 const HAIR        := Color("#4a4340")
 const HAIR_L      := Color("#6b625c")
 const BLUSH       := Color(0.95, 0.56, 0.70, 0.5)
-const CORRIDOR_HALF: float = 36.0 * 0.7 * 1.35 * 0.5
 
 var _world: Node2D
 var _soap: Soap
@@ -325,14 +324,15 @@ func _build_procedural(lv: Dictionary) -> void:
 	for _i in n_obs:
 		obs_y += obs_spacing * rng.randf_range(0.6, 1.4)
 		var radius: float = rng.randf_range(r_min, r_max)
-		var side: float   = 1.0 if rng.randf() > 0.5 else -1.0
-		var min_x: float  = CORRIDOR_HALF + radius + 4.0
-		var max_x: float  = hw - radius - 4.0
-		var x: float
-		if max_x < min_x:
-			x = side * ((min_x + max_x) * 0.5)
-		else:
-			x = side * rng.randf_range(min_x, max_x)
+		# Full lane width, minus wall clearance only. This used to keep a fixed
+		# strip down the centre (x=0) permanently obstacle-free on every row, so
+		# a straight line never touched a single obstacle on any procedural
+		# level — the level was "dodgeable" by construction, not by playing.
+		# One obstacle per row is never wide enough to close off the far side
+		# of the lane (max radius 38 against a min half-width of 92), so this
+		# still guarantees a passable gap; it just no longer guarantees WHERE.
+		var max_x: float = maxf(0.0, hw - radius - 4.0)
+		var x: float = rng.randf_range(-max_x, max_x)
 		_spawn_obstacle(x, obs_y, radius)
 
 	var n_pick: int = int(lv.get("proc_pickup_count", 2))
