@@ -59,7 +59,7 @@ func _draw_sparkle(pos: Vector2, r: float, col: Color) -> void:
 func _build_title(stars: int) -> void:
 	var lv: Dictionary = LevelData.LEVELS[GameData.current_level_index]
 	var level_flag: String = lv.get("flag", "")
-	var level_name: String = (level_flag + " " if level_flag != "" else "") + str(lv.get("name", ""))
+	var level_name: String = str(lv.get("name", ""))
 
 	# "New record!" badge — show whenever stars improved over personal best
 	if stars > GameData.prev_stars:
@@ -92,6 +92,14 @@ func _build_title(stars: int) -> void:
 	headline.anchor_left  = 0.0; headline.anchor_right  = 1.0
 	headline.offset_top   = 255.0; headline.offset_bottom = 308.0
 	add_child(headline)
+
+	if level_flag != "":
+		var flag_icon := FlagIcon.new()
+		flag_icon.country     = level_flag
+		flag_icon.icon_width  = 20.0
+		flag_icon.icon_height = 14.0
+		flag_icon.position    = Vector2(size.x * 0.5, 296.0)
+		add_child(flag_icon)
 
 	var sub := Label.new()
 	sub.text = level_name

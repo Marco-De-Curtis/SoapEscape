@@ -231,13 +231,22 @@ func _build_nodes() -> void:
 		# including locked ones (design ref: designs/03_level_map.png)
 		var name_lbl := Label.new()
 		var lv_flag: String = lv.get("flag", "")
-		name_lbl.text = (lv_flag + " " if lv_flag != "" else "") + str(lv.get("name", ""))
+		var name_box_pos := pos + Vector2(-40.0, -48.0)
+		name_lbl.text = str(lv.get("name", ""))
 		name_lbl.add_theme_font_override("font", nunito_sm)
 		name_lbl.add_theme_font_size_override("font_size", 9)
 		name_lbl.add_theme_color_override("font_color", C_PURPLE)
-		name_lbl.position = pos + Vector2(-40.0, -48.0)
+		name_lbl.position = name_box_pos
 		name_lbl.size     = Vector2(92.0, 18.0)
 		nodes_root.add_child(name_lbl)
+
+		if lv_flag != "":
+			var flag_icon := FlagIcon.new()
+			flag_icon.country     = lv_flag
+			flag_icon.icon_width  = 12.0
+			flag_icon.icon_height = 8.5
+			flag_icon.position    = name_box_pos + Vector2(-8.0, 9.0)
+			nodes_root.add_child(flag_icon)
 
 		# Stars below completed node
 		if stars > 0:

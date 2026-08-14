@@ -7,11 +7,14 @@ const BASE_WIDTH:    float = SoapArt.BASE_WIDTH
 const BASE_HEIGHT:   float = SoapArt.BASE_HEIGHT
 const SHRINK_RATE:   float = 0.012
 
-# Lateral top speed in real px/s, blended by size (same ceiling the old
-# accumulator model asymptoted toward at size=1: 4.2 * old LATERAL_SCALE 60
-# = 252, so per-level lane widths don't need re-balancing).
-const LATERAL_SPEED_MIN:   float = 120.0
-const LATERAL_SPEED_RANGE: float = 132.0
+# Lateral top speed in real px/s, blended by size. Raised well past the
+# old 120..252 ceiling (which read as sluggish on tap-and-hold/desktop-key
+# steering) to 180..380 — move_toward's rate is max_speed/RAMP_TIME, so
+# this also makes the ramp to top speed snap faster, not just the ceiling
+# itself. Drag steering (the primary touch path) is unaffected — it tracks
+# the finger 1:1 and never reads these constants.
+const LATERAL_SPEED_MIN:   float = 180.0
+const LATERAL_SPEED_RANGE: float = 200.0
 
 # The only two motion-feel knobs, in real seconds — framerate/physics-tick
 # independent by construction, no hidden fixed-point algebra to solve to

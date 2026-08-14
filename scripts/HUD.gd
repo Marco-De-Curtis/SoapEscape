@@ -13,6 +13,7 @@ const BOT_H    := 52.0
 # Top bar refs
 var _top_border:  ColorRect
 var _level_label: Label
+var _flag_icon:   FlagIcon
 var _prog_bg:     ColorRect
 var _prog_fill:   ColorRect
 var _prog_label:  Label
@@ -43,6 +44,14 @@ func _build_top_bar(root: Control) -> void:
 	bar.offset_bottom = TOP_Y + TOP_H
 	root.add_child(bar)
 
+	# Level flag — left, before the name
+	_flag_icon = FlagIcon.new()
+	_flag_icon.icon_width  = 14.0
+	_flag_icon.icon_height = 10.0
+	_flag_icon.position    = Vector2(14.0 + 7.0, TOP_H * 0.5)
+	_flag_icon.visible     = false
+	bar.add_child(_flag_icon)
+
 	# Level name — left
 	_level_label = Label.new()
 	_level_label.add_theme_font_override("font", _nv(700))
@@ -52,7 +61,7 @@ func _build_top_bar(root: Control) -> void:
 	_level_label.anchor_right  = 0.55
 	_level_label.anchor_top    = 0.0
 	_level_label.anchor_bottom = 1.0
-	_level_label.offset_left   = 14.0
+	_level_label.offset_left   = 34.0
 	_level_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	bar.add_child(_level_label)
 
@@ -177,10 +186,11 @@ func _build_bottom_bar(root: Control) -> void:
 
 func set_level_name(n: String, flag: String = "") -> void:
 	var idx := GameData.current_level_index + 1
+	_level_label.text = "Level %d — %s" % [idx, n]
+	_flag_icon.visible = flag != ""
 	if flag != "":
-		_level_label.text = "Level %d — %s %s" % [idx, flag, n]
-	else:
-		_level_label.text = "Level %d — %s" % [idx, n]
+		_flag_icon.country = flag
+		_flag_icon.queue_redraw()
 
 func set_accent(accent: Color) -> void:
 	if _top_border: _top_border.color = accent
