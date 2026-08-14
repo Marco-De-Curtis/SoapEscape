@@ -43,6 +43,8 @@ Main -> HomeScreen -> MapScreen -> Game -> WinScreen  -> Game (next) | GameCompl
 
 Because retry and next-level both reload `Game.tscn`, **`Game.start_level()` only ever runs once per scene instance** (from `_ready`). Anything that looks like inter-level reset state is effectively dead.
 
+`Tutorial.tscn` isn't part of the scene-swap chain above: `Game._maybe_show_tutorial()` preloads and `add_child()`s it as an overlay on top of the running level (levels 1-3 only, once per level per save file). `SkinsScreen.tscn` is a standalone gallery scene with no gameplay wiring — nothing in the codebase navigates to it, per its own header comment.
+
 ### UI is built in code, not in scenes
 
 The `.tscn` files are near-empty shells (200-600 bytes). Every label, button, panel, and anchor is constructed imperatively in `_ready()` in the matching script. When changing a screen's layout, edit the `.gd` file, not the scene.
