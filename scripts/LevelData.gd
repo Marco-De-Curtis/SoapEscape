@@ -26,7 +26,7 @@ const LEVEL_THEMES: Array[Dictionary] = [
 ]
 
 const LEVELS: Array = [
-	# ---- Level 1 — first real challenge: 2 wet zones, 2 obstacles ----
+	# ---- Level 1 — first real challenge: 3 wet zones, 4 obstacles ----
 	{
 		"id": 1,
 		"name": "Aegean Rain",
@@ -35,22 +35,25 @@ const LEVELS: Array = [
 		"obstacle_damage": 0.22,
 		"channel_half": 125.0,
 		"level_length": 2450.0,
-		"forward_speed": 188.0,
+		"forward_speed": 202.0,
 		"procedural": false,
 		"tutorial": true,
 		"wet_zones": [
 			{"y": 450.0,  "height": 255.0},
+			{"y": 1000.0, "height": 250.0},
 			{"y": 1500.0, "height": 270.0}
 		],
 		"obstacles": [
 			{"x": -58.0, "y":  920.0, "radius": 21.0},
-			{"x":  62.0, "y": 1600.0, "radius": 21.0}
+			{"x":  50.0, "y": 1120.0, "radius": 21.0},
+			{"x":  62.0, "y": 1600.0, "radius": 21.0},
+			{"x": -55.0, "y": 2050.0, "radius": 22.0}
 		],
 		"pickups": [
 			{"type": "soap_sliver", "x": 0.0, "y": 1280.0}
 		]
 	},
-	# ---- Level 2 — 3 wet zones, 7 obstacles, tighter ----
+	# ---- Level 2 — 3 wet zones, 9 obstacles, tighter ----
 	{
 		"id": 2,
 		"name": "Bogota Drain",
@@ -59,7 +62,7 @@ const LEVELS: Array = [
 		"obstacle_damage": 0.24,
 		"channel_half": 121.0,
 		"level_length": 2850.0,
-		"forward_speed": 206.0,
+		"forward_speed": 213.0,
 		"procedural": false,
 		"tutorial": false,
 		"wet_zones": [
@@ -70,7 +73,9 @@ const LEVELS: Array = [
 		"obstacles": [
 			{"x": -52.0, "y":  760.0, "radius": 24.0},
 			{"x":  65.0, "y":  900.0, "radius": 24.0},
+			{"x":  30.0, "y": 1220.0, "radius": 25.0},
 			{"x":   0.0, "y": 1580.0, "radius": 27.0},
+			{"x": -40.0, "y": 1850.0, "radius": 26.0},
 			{"x": -65.0, "y": 2200.0, "radius": 25.0},
 			{"x":  55.0, "y": 2330.0, "radius": 25.0},
 			{"x": -30.0, "y": 2530.0, "radius": 24.0},
@@ -80,7 +85,7 @@ const LEVELS: Array = [
 			{"type": "bubble_shield", "x": 10.0, "y": 1340.0}
 		]
 	},
-	# ---- Level 3 — 4 wet zones, 9 obstacles ----
+	# ---- Level 3 — 4 wet zones, 12 obstacles ----
 	{
 		"id": 3,
 		"name": "Tuscan Mist",
@@ -89,7 +94,7 @@ const LEVELS: Array = [
 		"obstacle_damage": 0.26,
 		"channel_half": 117.0,
 		"level_length": 3100.0,
-		"forward_speed": 215.0,
+		"forward_speed": 220.0,
 		"procedural": false,
 		"tutorial": false,
 		"wet_zones": [
@@ -99,10 +104,13 @@ const LEVELS: Array = [
 			{"y": 2650.0, "height": 285.0}
 		],
 		"obstacles": [
+			{"x": -20.0, "y":  420.0, "radius": 24.0},
 			{"x": -64.0, "y":  640.0, "radius": 26.0},
 			{"x":  68.0, "y":  762.0, "radius": 26.0},
+			{"x":  15.0, "y": 1100.0, "radius": 27.0},
 			{"x": -32.0, "y": 1460.0, "radius": 28.0},
 			{"x":  44.0, "y": 1600.0, "radius": 26.0},
+			{"x": -45.0, "y": 1950.0, "radius": 27.0},
 			{"x": -68.0, "y": 2290.0, "radius": 27.0},
 			{"x":  62.0, "y": 2430.0, "radius": 27.0},
 			{"x":  -5.0, "y": 2740.0, "radius": 29.0},
@@ -127,10 +135,10 @@ const LEVELS: Array = [
 	{
 		"id": 5, "name": "Sisserou Tunnel", "flag": "🇩🇲",
 		"min_soap": 0.41, "obstacle_damage": 0.28, "channel_half": 110.0,
-		"level_length": 3550.0, "forward_speed": 228.0,
+		"level_length": 3550.0, "forward_speed": 231.0,
 		"procedural": true, "proc_seed": 7001,
-		"proc_wet_zone_count": 5, "proc_wet_zone_height_min": 310.0, "proc_wet_zone_height_max": 450.0,
-		"proc_obstacle_count": 20, "proc_obstacle_radius_min": 24.0, "proc_obstacle_radius_max": 30.0,
+		"proc_wet_zone_count": 6, "proc_wet_zone_height_min": 310.0, "proc_wet_zone_height_max": 450.0,
+		"proc_obstacle_count": 23, "proc_obstacle_radius_min": 24.0, "proc_obstacle_radius_max": 31.0,
 		"proc_pickup_count": 2
 	},
 	{

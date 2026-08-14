@@ -20,6 +20,18 @@ const DISPLAY_WIDTH  := 115
 static var _tag_wght: int = 0
 static var _tag_wdth: int = 0
 static var _cache: Dictionary = {}
+static var _emoji_fallback: SystemFont
+
+# Fredoka/Nunito carry no emoji glyphs at all, and Godot doesn't pull in a
+# system fallback on its own — labels that mix text with emoji (level flags,
+# HUD icons) silently render tofu/nothing for the emoji run. Point every
+# FontVariation at the OS color-emoji font (Apple Color Emoji on iOS) as a
+# fallback so those glyphs actually draw.
+static func _emoji() -> SystemFont:
+	if _emoji_fallback == null:
+		_emoji_fallback = SystemFont.new()
+		_emoji_fallback.font_names = ["Apple Color Emoji", "Noto Color Emoji", "Segoe UI Emoji"]
+	return _emoji_fallback
 
 static func _init_tags() -> void:
 	if _tag_wght == 0:
@@ -46,5 +58,6 @@ static func _make(base: FontFile, weight: int, width: int) -> FontVariation:
 	if width > 0:
 		axes[_tag_wdth] = float(width)
 	fv.variation_opentype = axes
+	fv.fallbacks = [_emoji()]
 	_cache[key] = fv
 	return fv
